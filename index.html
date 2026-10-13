@@ -2,7 +2,7 @@
 <html lang="ru" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Майкл | Бариста & Кофейный тренер</title>
     <meta name="description" content="Майкл — профессиональный бариста. Практическое обучение, онлайн-курсы, закрытое кофейное сообщество.">
 
@@ -35,15 +35,33 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        .glass-panel {
-            background: rgba(18, 11, 8, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        /* Мгновенный отклик кнопок без задержки 300ms на телефонах */
+        * {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        /* Иконки и внутренности не перехватывают клик */
+        button *, a *, svg, i {
+            pointer-events: none;
+        }
+
+        /* Ускорение анимаций через GPU (без лагов) */
+        .hardware-accelerated {
+            transform: translateZ(0);
+            will-change: transform, opacity;
+        }
+
+        .glass-panel {
+            background: rgba(18, 11, 8, 0.88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
         .text-glow { text-shadow: 0 0 30px rgba(200, 138, 88, 0.35); }
         .gold-border { border: 1px solid rgba(200, 138, 88, 0.25); }
         
-        /* Стили для чата */
+        /* Стили чата */
         .chat-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
         .chat-closed { transform: translateY(20px); opacity: 0; pointer-events: none; }
     </style>
@@ -53,34 +71,38 @@
     <!-- НАВИГАЦИЯ -->
     <nav class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-white/10 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3 group">
-                <span class="font-serif text-xl tracking-widest uppercase font-semibold text-crema-100">Michael.</span>
+            <a href="#" class="flex items-center gap-3 group py-2 px-1 cursor-pointer">
+                <span class="font-serif text-2xl tracking-widest uppercase font-semibold text-crema-100">Michael.</span>
             </a>
 
-            <div class="hidden md:flex items-center gap-8 text-sm uppercase tracking-wider text-crema-200">
-                <a href="#about" class="hover:text-copper-400 transition-colors">Обо мне</a>
-                <a href="#services" class="hover:text-copper-400 transition-colors">Обучение</a>
-                <a href="#club" class="hover:text-copper-400 transition-colors">Сообщество</a>
-                <a href="#contact" class="hover:text-copper-400 transition-colors">Контакты</a>
+            <div class="hidden md:flex items-center gap-2 text-sm uppercase tracking-wider text-crema-200">
+                <a href="#about" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-lg">Обо мне</a>
+                <a href="#services" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-lg">Обучение</a>
+                <a href="#club" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-lg">Сообщество</a>
+                <a href="#contact" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-lg">Контакты</a>
             </div>
 
-            <div class="hidden md:flex gap-4 items-center">
-                <a href="https://t.me/punyaplll" target="_blank" class="text-crema-200 hover:text-copper-400 transition"><i data-lucide="send" class="w-5 h-5"></i></a>
-                <a href="https://instagram.com/timomikeee" target="_blank" class="text-crema-200 hover:text-copper-400 transition"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+            <div class="hidden md:flex gap-3 items-center">
+                <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="p-3 rounded-full hover:bg-espresso-800 text-crema-200 hover:text-copper-400 transition flex items-center justify-center min-w-[44px] min-h-[44px]" aria-label="Telegram">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </a>
+                <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" class="p-3 rounded-full hover:bg-espresso-800 text-crema-200 hover:text-copper-400 transition flex items-center justify-center min-w-[44px] min-h-[44px]" aria-label="Instagram">
+                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                </a>
             </div>
 
-            <!-- Мобильное меню (кнопка) -->
-            <button id="menu-btn" class="md:hidden text-crema-100 focus:outline-none">
+            <!-- Мобильная кнопка меню (Увеличенный размер зоны тычка) -->
+            <button id="menu-btn" class="md:hidden p-3 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 focus:outline-none min-w-[48px] min-h-[48px] flex items-center justify-center active:bg-espresso-800">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
         </div>
 
-        <!-- Мобильное меню (выпадающее) -->
-        <div id="mobile-menu" class="hidden bg-espresso-900 border-b border-white/10 px-6 py-6 space-y-4 text-center">
-            <a href="#about" class="block py-2 text-crema-200 hover:text-copper-400">Обо мне</a>
-            <a href="#services" class="block py-2 text-crema-200 hover:text-copper-400">Обучение</a>
-            <a href="#club" class="block py-2 text-crema-200 hover:text-copper-400">Сообщество</a>
-            <a href="#contact" class="block py-2 text-crema-200 hover:text-copper-400">Контакты</a>
+        <!-- Мобильное меню -->
+        <div id="mobile-menu" class="hidden bg-espresso-900 border-b border-white/10 px-6 py-4 space-y-2 text-center">
+            <a href="#about" onclick="toggleMobileMenu()" class="block py-3 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обо мне</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="block py-3 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обучение</a>
+            <a href="#club" onclick="toggleMobileMenu()" class="block py-3 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Сообщество</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block py-3 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Контакты</a>
         </div>
     </nav>
 
@@ -88,12 +110,12 @@
     <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
         <div class="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-copper-500/30 via-espresso-900 to-espresso-950"></div>
         
-        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-10">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gold-border bg-espresso-900/60 text-copper-400 text-xs tracking-widest uppercase mb-4">
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-6">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full gold-border bg-espresso-900/80 text-copper-400 text-xs tracking-widest uppercase mb-2">
                 Практикующий бариста
             </div>
 
-            <h1 class="font-serif text-5xl sm:text-6xl md:text-7xl font-normal leading-tight text-glow text-crema-50">
+            <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-normal leading-tight text-glow text-crema-50">
                 Кофе — это мастерство, <br><span class="italic text-copper-400">которое можно освоить</span>
             </h1>
 
@@ -102,10 +124,10 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-                <a href="#services" class="w-full sm:w-auto px-8 py-4 rounded-full bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 transition-all">
+                <a href="#services" class="w-full sm:w-auto px-8 py-4 rounded-full bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 active:scale-95 transition-all text-center flex items-center justify-center min-h-[52px]">
                     Чему я обучаю
                 </a>
-                <a href="#about" class="w-full sm:w-auto px-8 py-4 rounded-full gold-border bg-espresso-900/40 hover:bg-white/5 transition-all text-crema-100 text-sm tracking-wider uppercase">
+                <a href="#about" class="w-full sm:w-auto px-8 py-4 rounded-full gold-border bg-espresso-900/60 hover:bg-white/10 active:scale-95 transition-all text-crema-100 text-sm tracking-wider uppercase text-center flex items-center justify-center min-h-[52px]">
                     Подробнее обо мне
                 </a>
             </div>
@@ -120,41 +142,41 @@
                 <div class="space-y-8">
                     <div>
                         <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-4">Меня зовут Майкл</h2>
-                        <p class="text-crema-200 leading-relaxed font-light">
+                        <p class="text-crema-200 leading-relaxed font-light text-base sm:text-lg">
                             Я бариста с практическим опытом работы в кофейнях и интересом к тому, как устроена кофейная индустрия изнутри. За время работы я познакомился с разными форматами заведений, научился работать с гостями и освоил процессы, необходимые для качественного обслуживания.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="coffee" class="w-6 h-6 text-copper-400 mb-4"></i>
-                            <h3 class="font-serif text-lg mb-2 text-crema-100">Приготовление</h3>
-                            <p class="text-sm text-crema-200/70">Качество приготовления и фокус на результате в чашке.</p>
+                            <i data-lucide="coffee" class="w-6 h-6 text-copper-400 mb-3"></i>
+                            <h3 class="font-serif text-lg mb-1 text-crema-100">Приготовление</h3>
+                            <p class="text-xs sm:text-sm text-crema-200/70">Качество приготовления и фокус на результате в чашке.</p>
                         </div>
                         <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="settings" class="w-6 h-6 text-copper-400 mb-4"></i>
-                            <h3 class="font-serif text-lg mb-2 text-crema-100">Оборудование</h3>
-                            <p class="text-sm text-crema-200/70">Опыт работы с автоматическими и традиционными эспрессо-машинами.</p>
+                            <i data-lucide="settings" class="w-6 h-6 text-copper-400 mb-3"></i>
+                            <h3 class="font-serif text-lg mb-1 text-crema-100">Оборудование</h3>
+                            <p class="text-xs sm:text-sm text-crema-200/70">Опыт работы с автоматическими и традиционными эспрессо-машинами.</p>
                         </div>
                         <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="users" class="w-6 h-6 text-copper-400 mb-4"></i>
-                            <h3 class="font-serif text-lg mb-2 text-crema-100">Обслуживание</h3>
-                            <p class="text-sm text-crema-200/70">Создание комфортной атмосферы и помощь гостям с выбором.</p>
+                            <i data-lucide="users" class="w-6 h-6 text-copper-400 mb-3"></i>
+                            <h3 class="font-serif text-lg mb-1 text-crema-100">Обслуживание</h3>
+                            <p class="text-xs sm:text-sm text-crema-200/70">Создание комфортной атмосферы и помощь гостям с выбором.</p>
                         </div>
                         <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="calculator" class="w-6 h-6 text-copper-400 mb-4"></i>
-                            <h3 class="font-serif text-lg mb-2 text-crema-100">Касса (Акси)</h3>
-                            <p class="text-sm text-crema-200/70">Скорость, точность расчётов и организация рабочего процесса.</p>
+                            <i data-lucide="calculator" class="w-6 h-6 text-copper-400 mb-3"></i>
+                            <h3 class="font-serif text-lg mb-1 text-crema-100">Касса (Акси)</h3>
+                            <p class="text-xs sm:text-sm text-crema-200/70">Скорость, точность расчётов и организация рабочего процесса.</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Декоративный / Имиджевый блок -->
-                <div class="relative h-[600px] rounded-3xl overflow-hidden gold-border bg-espresso-800 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610632380989-680fe0c95b41?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
-                    <div class="relative z-10 text-center p-8">
-                        <i data-lucide="quote" class="w-10 h-10 text-copper-500/50 mx-auto mb-4"></i>
-                        <p class="font-serif text-2xl text-crema-100 italic">"Моя цель — сделать знания о кофе доступными и помочь развивать реальные практические навыки."</p>
+                <!-- Декоративный блок -->
+                <div class="relative h-[450px] sm:h-[550px] rounded-3xl overflow-hidden gold-border bg-espresso-800 flex items-center justify-center p-6 text-center">
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610632380989-680fe0c95b41?q=60&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
+                    <div class="relative z-10 max-w-md">
+                        <i data-lucide="quote" class="w-10 h-10 text-copper-500/60 mx-auto mb-4"></i>
+                        <p class="font-serif text-xl sm:text-2xl text-crema-100 italic leading-snug">"Моя цель — сделать знания о кофе доступными и помочь развивать реальные практические навыки."</p>
                     </div>
                 </div>
             </div>
@@ -167,39 +189,46 @@
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="text-copper-400 text-xs uppercase tracking-widest font-semibold mb-2 block">Форматы работы</span>
                 <h2 class="font-serif text-3xl sm:text-4xl text-crema-50">Чему я обучаю</h2>
-                <p class="text-crema-200 text-sm mt-4">Выбирайте подходящий формат в зависимости от ваших целей и текущего уровня.</p>
+                <p class="text-crema-200 text-sm mt-3">Выбирайте подходящий формат в зависимости от ваших целей и текущего уровня.</p>
             </div>
 
             <!-- Блок 1: Онлайн-курсы -->
             <div class="mb-20">
-                <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">Онлайн-курсы</h3>
+                <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">1. Онлайн-курсы</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Карточка курса (Шаблон) -->
+                    <!-- Карточка 1 -->
                     <div class="bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group">
-                        <div class="h-48 bg-espresso-800 relative">
-                            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-50 transition-transform duration-700 group-hover:scale-105"></div>
-                            <div class="absolute bottom-4 left-4 bg-espresso-950/80 px-3 py-1 rounded text-xs text-copper-400 uppercase tracking-wide backdrop-blur-sm">Для начинающих</div>
+                        <div class="h-48 bg-espresso-800 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
+                            <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Для начинающих</div>
                         </div>
-                        <div class="p-8 flex-1 flex flex-col">
-                            <h4 class="font-serif text-xl text-crema-50 mb-3">Базовый курс бариста (В разработке)</h4>
-                            <p class="text-sm text-crema-200 mb-6 flex-1 font-light">Фундаментальные знания о зерне, экстракции и базовом взбивании молока. Идеально для тех, кто хочет понять основы.</p>
-                            <div class="flex justify-between items-center pt-4 border-t border-white/10 mt-auto">
-                                <span class="text-crema-100 font-medium">Цена: Уточняется</span>
-                                <button onclick="orderService('Онлайн-курс Базовый')" class="text-copper-400 text-sm uppercase font-semibold hover:text-copper-300 flex items-center gap-1">Узнать <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                        <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-serif text-xl text-crema-50 mb-3">Базовый курс бариста (В разработке)</h4>
+                                <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Фундаментальные знания о зерне, экстракции и базовом взбивании молока. Идеально для тех, кто хочет понять основы.</p>
+                            </div>
+                            <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+                                <span class="text-xs uppercase text-crema-200/60 font-medium">Статус: Уточняется</span>
+                                <button type="button" onclick="orderService('Онлайн-курс Базовый')" class="px-5 py-3 rounded-xl bg-copper-500/10 hover:bg-copper-500 text-copper-400 hover:text-espresso-950 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer min-h-[44px] flex items-center gap-2">
+                                    Узнать <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <!-- Место под второй курс -->
-                    <div class="bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group">
+
+                    <!-- Карточка 2 -->
+                    <div class="bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col">
                         <div class="h-48 bg-espresso-800 flex items-center justify-center relative">
                             <i data-lucide="book-open" class="w-12 h-12 text-white/10"></i>
-                            <div class="absolute bottom-4 left-4 bg-espresso-950/80 px-3 py-1 rounded text-xs text-copper-400 uppercase tracking-wide backdrop-blur-sm">Продвинутый</div>
+                            <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Продвинутый</div>
                         </div>
-                        <div class="p-8 flex-1 flex flex-col">
-                            <h4 class="font-serif text-xl text-crema-50 mb-3">Латте-арт и химия экстракции</h4>
-                            <p class="text-sm text-crema-200 mb-6 flex-1 font-light">Программа находится в стадии формирования. Детальный разбор температуры, давления и техники вливания.</p>
-                            <div class="flex justify-between items-center pt-4 border-t border-white/10 mt-auto">
-                                <span class="text-crema-100 font-medium">Скоро</span>
+                        <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-serif text-xl text-crema-50 mb-3">Латте-арт и химия экстракции</h4>
+                                <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Программа находится в стадии формирования. Детальный разбор температуры, давления и техники вливания.</p>
+                            </div>
+                            <div class="pt-4 border-t border-white/10">
+                                <span class="text-xs uppercase text-copper-400 font-medium">Анонс скоро</span>
                             </div>
                         </div>
                     </div>
@@ -208,44 +237,43 @@
 
             <!-- Блок 2: Личное обучение -->
             <div class="mb-20">
-                <div class="bg-espresso-900 rounded-3xl gold-border p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
-                    <div class="md:w-2/3 space-y-6">
-                        <h3 class="font-serif text-2xl text-crema-100">Индивидуальное обучение</h3>
-                        <p class="text-sm text-crema-200 leading-relaxed font-light">
+                <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">2. Индивидуальное обучение</h3>
+                <div class="bg-espresso-900 rounded-3xl gold-border p-6 sm:p-10 flex flex-col lg:flex-row gap-8 items-center">
+                    <div class="lg:w-2/3 space-y-6">
+                        <p class="text-base text-crema-200 leading-relaxed font-light">
                             Персональная работа за эспрессо-машиной. Программа адаптируется под ваши запросы: от базовой настройки помола (dial-in) до отработки скорости отдачи напитков и общения с гостем.
                         </p>
-                        <ul class="text-sm text-crema-200 space-y-2">
-                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-copper-400"></i> Разбор теории и сразу применение на практике</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-copper-400"></i> Постановка руки (холдер, темперовка, питчер)</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-copper-400"></i> Обсуждение формата и сроков — индивидуально</li>
+                        <ul class="text-sm text-crema-200 space-y-3">
+                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Разбор теории и сразу применение на практике</li>
+                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Постановка руки (холдер, темперовка, питчер)</li>
+                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Обсуждение формата и сроков — индивидуально</li>
                         </ul>
                     </div>
-                    <div class="md:w-1/3 w-full text-center p-6 bg-espresso-950 rounded-2xl border border-white/5">
-                        <div class="text-crema-100 font-serif text-xl mb-4">По запросу</div>
-                        <button onclick="orderService('Личное обучение')" class="w-full px-6 py-4 rounded-xl bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 transition-all">
-                            Связаться со мной
+                    <div class="lg:w-1/3 w-full p-6 bg-espresso-950 rounded-2xl border border-white/5 text-center space-y-4">
+                        <div class="text-crema-100 font-serif text-xl">Формат персональный</div>
+                        <button type="button" onclick="orderService('Личное обучение')" class="w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 active:scale-95 transition-all cursor-pointer min-h-[50px] flex items-center justify-center">
+                            Записаться на обучение
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Блок 3: Закрытое сообщество (Telegram) -->
-            <div id="club" class="relative rounded-3xl overflow-hidden shadow-2xl shadow-copper-500/10">
+            <div id="club" class="relative rounded-3xl overflow-hidden shadow-2xl">
                 <div class="absolute inset-0 bg-gradient-to-br from-espresso-800 to-copper-900/40 z-0"></div>
-                <div class="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-copper-500/30 rounded-3xl">
+                <div class="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-copper-500/30 rounded-3xl">
                     <div class="space-y-4 md:w-3/5">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-copper-500/20 text-copper-400 text-xs uppercase tracking-widest font-semibold">
                             <i data-lucide="star" class="w-3.5 h-3.5"></i> Premium Content
                         </div>
-                        <h3 class="font-serif text-2xl md:text-3xl text-crema-50">Платное кофейное сообщество</h3>
+                        <h3 class="font-serif text-2xl sm:text-3xl text-crema-50">3. Платное Telegram-сообщество</h3>
                         <p class="text-sm text-crema-100 font-light leading-relaxed">
-                            Закрытый Telegram-канал, где я публикую обучающие материалы, мастер-классы, разборы оборудования и делюсь развлекательным контентом индустрии.
+                            Закрытый канал, где я публикую обучающие материалы, мастер-классы, разборы оборудования и делюсь развлекательным контентом кофейной индустрии.
                         </p>
-                        <p class="text-xs text-crema-200/70 italic">*Доступ оформляется через личные сообщения.</p>
                     </div>
                     <div class="md:w-2/5 flex justify-end w-full">
-                        <a href="https://t.me/punyaplll" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 transition-all flex items-center justify-center gap-2">
-                            <i data-lucide="send" class="w-4 h-4"></i> Вступить через Telegram
+                        <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 active:scale-95 transition-all text-center flex items-center justify-center gap-2 min-h-[50px]">
+                            <i data-lucide="send" class="w-4 h-4"></i> Вступить в канал
                         </a>
                     </div>
                 </div>
@@ -255,67 +283,71 @@
 
     <!-- КОНТАКТЫ И ФОРМА ЗАЯВКИ -->
     <section id="contact" class="py-24 bg-espresso-900 border-t border-white/5">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
             
             <!-- Контакты -->
             <div class="space-y-8">
-                <h2 class="font-serif text-3xl sm:text-4xl text-crema-50">Давайте обсудим ваше обучение</h2>
-                <p class="text-crema-200 text-sm font-light">Напишите мне напрямую или оставьте заявку, и я свяжусь с вами для обсуждения деталей.</p>
+                <div>
+                    <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-3">Связаться со мной</h2>
+                    <p class="text-crema-200 text-sm font-light">Нажмите на любой удобный способ связи или оставьте быстрый запрос.</p>
+                </div>
                 
-                <div class="space-y-6 pt-4">
-                    <a href="https://t.me/punyaplll" target="_blank" class="flex items-center gap-4 text-crema-100 hover:text-copper-400 transition group">
-                        <div class="w-12 h-12 rounded-full bg-espresso-800 flex items-center justify-center group-hover:bg-copper-500/20"><i data-lucide="send" class="w-5 h-5"></i></div>
+                <div class="space-y-4">
+                    <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/60 hover:bg-espresso-950 border border-white/5 hover:border-copper-500/40 transition group cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-copper-500/10 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition"><i data-lucide="send" class="w-5 h-5"></i></div>
                         <div>
                             <div class="text-xs text-crema-200/50 uppercase tracking-widest">Telegram</div>
-                            <div class="font-medium">@punyaplll</div>
+                            <div class="font-medium text-crema-100">@punyaplll</div>
                         </div>
                     </a>
-                    <a href="tel:+789930314381" class="flex items-center gap-4 text-crema-100 hover:text-copper-400 transition group">
-                        <div class="w-12 h-12 rounded-full bg-espresso-800 flex items-center justify-center group-hover:bg-copper-500/20"><i data-lucide="phone" class="w-5 h-5"></i></div>
+
+                    <a href="tel:+789930314381" class="flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/60 hover:bg-espresso-950 border border-white/5 hover:border-copper-500/40 transition group cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-copper-500/10 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition"><i data-lucide="phone" class="w-5 h-5"></i></div>
                         <div>
                             <div class="text-xs text-crema-200/50 uppercase tracking-widest">Телефон</div>
-                            <div class="font-medium">8 (993) 031-43-81</div>
+                            <div class="font-medium text-crema-100">8 (993) 031-43-81</div>
                         </div>
                     </a>
-                    <a href="mailto:timomike19@gmail.com" class="flex items-center gap-4 text-crema-100 hover:text-copper-400 transition group">
-                        <div class="w-12 h-12 rounded-full bg-espresso-800 flex items-center justify-center group-hover:bg-copper-500/20"><i data-lucide="mail" class="w-5 h-5"></i></div>
+
+                    <a href="mailto:timomike19@gmail.com" class="flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/60 hover:bg-espresso-950 border border-white/5 hover:border-copper-500/40 transition group cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-copper-500/10 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition"><i data-lucide="mail" class="w-5 h-5"></i></div>
                         <div>
                             <div class="text-xs text-crema-200/50 uppercase tracking-widest">Email</div>
-                            <div class="font-medium">timomike19@gmail.com</div>
+                            <div class="font-medium text-crema-100">timomike19@gmail.com</div>
                         </div>
                     </a>
-                    <a href="https://instagram.com/timomikeee" target="_blank" class="flex items-center gap-4 text-crema-100 hover:text-copper-400 transition group">
-                        <div class="w-12 h-12 rounded-full bg-espresso-800 flex items-center justify-center group-hover:bg-copper-500/20"><i data-lucide="instagram" class="w-5 h-5"></i></div>
+
+                    <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" class="flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/60 hover:bg-espresso-950 border border-white/5 hover:border-copper-500/40 transition group cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-copper-500/10 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition"><i data-lucide="instagram" class="w-5 h-5"></i></div>
                         <div>
                             <div class="text-xs text-crema-200/50 uppercase tracking-widest">Instagram</div>
-                            <div class="font-medium">@timomikeee</div>
+                            <div class="font-medium text-crema-100">@timomikeee</div>
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- Форма-генератор сообщения -->
-            <div class="bg-espresso-950 p-8 rounded-3xl gold-border shadow-xl">
+            <!-- Форма обращения -->
+            <div class="bg-espresso-950 p-6 sm:p-8 rounded-3xl gold-border shadow-xl self-start">
                 <h3 class="font-serif text-2xl text-crema-50 mb-6">Быстрая заявка</h3>
                 <form id="contact-form" onsubmit="submitFormViaTG(event)" class="space-y-4">
                     <div>
-                        <label class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Как к вам обращаться?</label>
-                        <input id="f-name" type="text" required class="w-full px-4 py-3 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:outline-none focus:border-copper-400" placeholder="Ваше имя">
+                        <label for="f-name" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Ваше имя</label>
+                        <input id="f-name" type="text" required class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:outline-none focus:border-copper-400" placeholder="Как к вам обращаться?">
                     </div>
                     <div>
-                        <label class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Что вас интересует?</label>
-                        <select id="f-service" class="w-full px-4 py-3 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:outline-none focus:border-copper-400">
+                        <label for="f-service" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Направление</label>
+                        <select id="f-service" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:outline-none focus:border-copper-400">
                             <option value="Личное обучение">Личное обучение</option>
                             <option value="Онлайн-курс">Онлайн-курс</option>
                             <option value="Закрытое сообщество">Доступ в закрытый канал</option>
                             <option value="Другой вопрос">Другой вопрос</option>
                         </select>
                     </div>
-                    <div class="pt-4">
-                        <button type="submit" class="w-full py-4 rounded-xl bg-copper-500 text-espresso-950 font-bold uppercase tracking-wider text-sm hover:bg-copper-400 transition-all shadow-lg flex justify-center items-center gap-2">
-                            Написать в Telegram <i data-lucide="send" class="w-4 h-4"></i>
+                    <div class="pt-2">
+                        <button type="submit" class="w-full py-4 rounded-xl bg-copper-500 text-espresso-950 font-bold uppercase tracking-wider text-sm hover:bg-copper-400 active:scale-95 transition-all shadow-lg flex justify-center items-center gap-2 cursor-pointer min-h-[50px]">
+                            Отправить в Telegram <i data-lucide="send" class="w-4 h-4"></i>
                         </button>
-                        <p class="text-xs text-crema-200/50 text-center mt-3">Ваше сообщение откроется в приложении Telegram готовым к отправке.</p>
                     </div>
                 </form>
             </div>
@@ -324,58 +356,69 @@
 
     <!-- ПОДВАЛ -->
     <footer class="py-8 bg-espresso-950 border-t border-white/10 text-xs text-crema-200/60 text-center">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="font-serif tracking-widest uppercase text-crema-100 mb-2">Michael. Personal Brand</div>
-            <div>© 2024-2026. Практическое обучение бариста.</div>
+        <div class="max-w-7xl mx-auto px-6 space-y-2">
+            <div class="font-serif tracking-widest uppercase text-crema-100">Michael. Personal Brand</div>
+            <div>© 2024-2026. Практическое обучение бариста. Все права защищены.</div>
         </div>
     </footer>
 
     <!-- ЧАТ ПОДДЕРЖКИ (Плавающий виджет) -->
-    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end hardware-accelerated">
         <!-- Окно чата -->
-        <div id="chat-window" class="chat-closed w-[320px] bg-espresso-900 border border-copper-500/30 rounded-2xl shadow-2xl mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
+        <div id="chat-window" class="chat-closed w-[310px] sm:w-[350px] bg-espresso-900 border border-copper-500/40 rounded-2xl shadow-2xl mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
             <div class="bg-espresso-950 p-4 border-b border-white/10 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-copper-500 flex items-center justify-center text-espresso-950"><i data-lucide="coffee" class="w-4 h-4"></i></div>
+                    <div class="w-9 h-9 rounded-full bg-copper-500 flex items-center justify-center text-espresso-950 font-bold"><i data-lucide="coffee" class="w-4 h-4"></i></div>
                     <div>
                         <div class="text-sm font-semibold text-crema-50">Чат с Майклом</div>
-                        <div class="text-xs text-copper-400">На связи</div>
+                        <div class="text-xs text-copper-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Онлайн
+                        </div>
                     </div>
                 </div>
-                <button onclick="toggleChat()" class="text-crema-200 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button type="button" onclick="toggleChat()" class="p-2 text-crema-200 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="p-4 h-[200px] overflow-y-auto bg-espresso-900/50 flex flex-col gap-3">
-                <!-- Сообщение от Майкла -->
-                <div class="bg-espresso-800 text-sm text-crema-100 p-3 rounded-xl rounded-tl-sm self-start max-w-[85%]">
-                    Привет! 👋 Если есть вопросы по обучению или доступу в канал — пиши сюда!
+            <div class="p-4 h-[180px] overflow-y-auto bg-espresso-900/60 flex flex-col gap-3">
+                <div class="bg-espresso-800 text-xs sm:text-sm text-crema-100 p-3 rounded-xl rounded-tl-sm self-start max-w-[90%] border border-white/5">
+                    Привет! 👋 Если есть вопросы по обучению или каналу — напиши сообщение ниже, я сразу отвечу!
                 </div>
             </div>
             <form onsubmit="sendChatMessage(event)" class="p-3 bg-espresso-950 border-t border-white/10 flex gap-2">
-                <input id="chat-input" type="text" placeholder="Введите сообщение..." required class="w-full bg-espresso-900 border border-white/10 rounded-lg px-3 text-sm text-crema-100 focus:outline-none focus:border-copper-400">
-                <button type="submit" class="bg-copper-500 p-2 rounded-lg text-espresso-950 hover:bg-copper-400"><i data-lucide="send" class="w-4 h-4"></i></button>
+                <input id="chat-input" type="text" placeholder="Задайте вопрос..." required class="w-full bg-espresso-900 border border-white/10 rounded-xl px-3 text-sm text-crema-100 focus:outline-none focus:border-copper-400">
+                <button type="submit" class="bg-copper-500 p-3 rounded-xl text-espresso-950 hover:bg-copper-400 active:scale-95 transition cursor-pointer flex items-center justify-center min-w-[44px]"><i data-lucide="send" class="w-4 h-4"></i></button>
             </form>
         </div>
         
-        <!-- Кнопка открытия чата -->
-        <button onclick="toggleChat()" class="w-14 h-14 bg-copper-500 rounded-full flex items-center justify-center text-espresso-950 shadow-lg shadow-copper-500/30 hover:scale-105 transition-transform">
-            <i data-lucide="message-circle" class="w-6 h-6"></i>
+        <!-- Плавающая кнопка чата (100% легкое попадание пальцем) -->
+        <button type="button" onclick="toggleChat()" class="w-14 h-14 sm:w-16 sm:h-16 bg-copper-500 rounded-full flex items-center justify-center text-espresso-950 shadow-2xl shadow-copper-500/40 hover:scale-105 active:scale-95 transition-transform cursor-pointer border-2 border-espresso-950">
+            <i data-lucide="message-circle" class="w-7 h-7"></i>
         </button>
     </div>
 
     <!-- СКРИПТЫ -->
     <script>
-        lucide.createIcons(); // Инициализация иконок
+        // Инициализация иконок
+        lucide.createIcons();
 
         // Мобильное меню
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => {
+
+        function toggleMobileMenu() {
             mobileMenu.classList.toggle('hidden');
+        }
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMobileMenu();
         });
 
         // Функция быстрой записи из карточек услуг
         function orderService(serviceName) {
-            document.getElementById('f-service').value = serviceName;
+            const select = document.getElementById('f-service');
+            if(select) {
+                select.value = serviceName;
+            }
             document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -405,16 +448,16 @@
 
         function sendChatMessage(e) {
             e.preventDefault();
-            const input = document.getElementById('chat-input').value;
-            if(!input) return;
+            const input = document.getElementById('chat-input');
+            const val = input.value.trim();
+            if(!val) return;
             
-            const text = `Сообщение с сайта: ${input}`;
+            const text = `Вопрос с сайта: ${val}`;
             const tgLink = `https://t.me/punyaplll?text=${encodeURIComponent(text)}`;
             
-            // Открываем Telegram для продолжения диалога
             window.open(tgLink, '_blank');
-            document.getElementById('chat-input').value = '';
-            toggleChat(); // закрываем окно чата
+            input.value = '';
+            toggleChat();
         }
     </script>
 </body>
