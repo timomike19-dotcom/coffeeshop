@@ -35,27 +35,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Глобальный запрет задержек нажатия и принудительное расширение кнопок */
-        * {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
-        }
-
-        /* Каждый кликабельный элемент строго расширяется на всю свою визуальную площадь */
-        a, button, select, input {
-            cursor: pointer !important;
-            user-select: none;
-        }
-
-        /* Отключаем перехват кликов внутренними иконками и текстом */
-        button *, a *, svg, i, span, p, h1, h2, h3, h4 {
+        /* ИСПРАВЛЕНО: раньше здесь был глобальный pointer-events:none на p, span, h1-h4,
+           что ломало клики по всей странице. Теперь правило точечное — только иконки. */
+        button svg, a svg {
             pointer-events: none;
-        }
-
-        /* Мобильные инпуты сохраняют ввод */
-        input, select, textarea {
-            pointer-events: auto !important;
         }
 
         .glass-panel {
@@ -397,7 +380,7 @@
             </form>
         </div>
         
-        <!-- Плавающая кнопка чата (100% легкий клик по всей площади круга!) -->
+        <!-- Плавающая кнопка чата -->
         <button type="button" onclick="toggleChat()" aria-label="Открыть чат" class="w-16 h-16 bg-copper-500 rounded-full flex items-center justify-center text-espresso-950 shadow-2xl shadow-copper-500/50 hover:scale-105 active:scale-95 transition-transform border-2 border-espresso-950">
             <i data-lucide="message-circle" class="w-7 h-7"></i>
         </button>
