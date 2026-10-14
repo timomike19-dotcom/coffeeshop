@@ -45,7 +45,8 @@
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 
     <style>
-        button svg, a svg { pointer-events: none; }
+        /* Иконки внутри кнопок и ссылок не перехватывают клик: нажатие всегда попадает в саму кнопку */
+        button svg, a svg, button i, a i { pointer-events: none; }
         a, button, select, input { touch-action: manipulation; }
         a, button { cursor: pointer; -webkit-tap-highlight-color: rgba(200, 138, 88, 0.25); }
 
@@ -57,7 +58,8 @@
             outline-offset: 2px;
         }
 
-        #club { scroll-margin-top: 6rem; }
+        /* Фиксированная шапка (80px) больше не закрывает заголовки при переходе по якорям */
+        section[id], #club { scroll-margin-top: 5.5rem; }
 
         .glass-panel {
             background: rgba(18, 11, 8, 0.92);
@@ -67,9 +69,6 @@
 
         .text-glow { text-shadow: 0 0 30px rgba(200, 138, 88, 0.35); }
         .gold-border { border: 1px solid rgba(200, 138, 88, 0.25); }
-
-        .chat-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-        .chat-closed { transform: translateY(20px); opacity: 0; pointer-events: none; }
 
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto !important; }
@@ -203,42 +202,24 @@
             <!-- Блок 1: Онлайн-курсы -->
             <div class="mb-20">
                 <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">1. Онлайн-курсы</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <a href="#contact" data-service="Онлайн-курс" class="pressable w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group hover:border-copper-500/60">
-                        <div class="h-48 bg-espresso-800 relative overflow-hidden w-full">
-                            <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
-                            <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Для начинающих</div>
+                <a href="https://t.me/coffeeshop_michael_bot?start=education" target="_blank" rel="noopener" class="pressable w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col md:flex-row group hover:border-copper-500/60">
+                    <div class="h-48 md:h-auto md:min-h-[260px] md:w-2/5 bg-espresso-800 relative overflow-hidden w-full">
+                        <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
+                        <div class="pointer-events-none absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Для начинающих</div>
+                    </div>
+                    <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between w-full">
+                        <div>
+                            <h4 class="font-serif text-xl text-crema-50 mb-3">Базовый курс бариста</h4>
+                            <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Фундаментальные знания о зерне, экстракции и базовом взбивании молока. Идеально для тех, кто хочет понять основы.</p>
                         </div>
-                        <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between w-full">
-                            <div>
-                                <h4 class="font-serif text-xl text-crema-50 mb-3">Базовый курс бариста (В разработке)</h4>
-                                <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Фундаментальные знания о зерне, экстракции и базовом взбивании молока. Идеально для тех, кто хочет понять основы.</p>
-                            </div>
-                            <div class="pt-4 border-t border-white/10 flex items-center justify-between w-full">
-                                <span class="text-xs uppercase text-crema-200/60 font-medium">Статус: Уточняется</span>
-                                <span class="px-5 py-3 rounded-xl bg-copper-500 text-espresso-950 font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2">
-                                    Записаться в боте <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <div class="w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col opacity-80">
-                        <div class="h-48 bg-espresso-800 flex items-center justify-center relative w-full">
-                            <i data-lucide="book-open" class="w-12 h-12 text-white/10"></i>
-                            <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Продвинутый</div>
-                        </div>
-                        <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between w-full">
-                            <div>
-                                <h4 class="font-serif text-xl text-crema-50 mb-3">Латте-арт и химия экстракции</h4>
-                                <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Программа находится в стадии формирования. Детальный разбор температуры, давления и техники вливания.</p>
-                            </div>
-                            <div class="pt-4 border-t border-white/10">
-                                <span class="text-xs uppercase text-copper-400 font-medium">Анонс скоро</span>
-                            </div>
+                        <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+                            <span class="text-xs uppercase text-crema-200/60 font-medium">Статус: Имеется</span>
+                            <span class="px-5 py-3 rounded-xl bg-copper-500 text-espresso-950 font-bold text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 min-h-[44px]">
+                                Записаться в боте <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </span>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Блок 2: Личное обучение -->
@@ -277,7 +258,7 @@
                             Канал, где я публикую обучающие материалы, гайды, мастер-классы, разборы оборудования и делюсь развлекательным контентом кофейной индустрии.
                         </p>
                         <p class="text-xs text-crema-200/70">
-                            Прямая ссылка: <a href="https://t.me/coffeeshopmichael" target="_blank" rel="noopener" class="text-copper-400 underline hover:text-copper-300">t.me/coffeeshopmichael</a>
+                            Прямая ссылка: <a href="https://t.me/coffeeshopmichael" target="_blank" rel="noopener" class="text-copper-400 underline hover:text-copper-300 inline-block py-1">t.me/coffeeshopmichael</a>
                         </p>
                     </div>
                     <div class="md:w-2/5 flex justify-end w-full">
@@ -378,46 +359,12 @@
         </div>
     </footer>
 
-    <!-- ЧАТ ПОДДЕРЖКИ -->
-    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <div id="chat-window" class="chat-closed w-[310px] sm:w-[350px] bg-espresso-900 border border-copper-500/40 rounded-2xl shadow-2xl mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
-            <div class="bg-espresso-950 p-4 border-b border-white/10 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-copper-500 flex items-center justify-center text-espresso-950 font-bold"><i data-lucide="coffee" class="w-4 h-4"></i></div>
-                    <div>
-                        <div class="text-sm font-semibold text-crema-50">Чат с Майклом</div>
-                        <div class="text-xs text-copper-400 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Онлайн
-                        </div>
-                    </div>
-                </div>
-                <button type="button" id="chat-close-btn" class="p-2 text-crema-200 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="p-4 h-[180px] overflow-y-auto bg-espresso-900/60 flex flex-col gap-3">
-                <div class="bg-espresso-800 text-xs sm:text-sm text-crema-100 p-3 rounded-xl rounded-tl-sm self-start max-w-[90%] border border-white/5">
-                    Привет! 👋 Если есть вопросы по обучению или каналу — напиши сообщение ниже, отвечу лично!
-                </div>
-            </div>
-            <form id="chat-form" class="p-3 bg-espresso-950 border-t border-white/10 flex gap-2 w-full">
-                <input id="chat-input" type="text" placeholder="Задайте вопрос..." required class="w-full bg-espresso-900 border border-white/10 rounded-xl px-3 text-sm text-crema-100 focus:outline-none focus:border-copper-400">
-                <button type="submit" class="bg-copper-500 p-3 rounded-xl text-espresso-950 hover:bg-copper-400 active:scale-95 transition flex items-center justify-center shrink-0 min-w-[48px] min-h-[48px]">
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                </button>
-            </form>
-        </div>
-
-        <button type="button" id="chat-toggle-btn" aria-label="Открыть чат" class="w-16 h-16 bg-copper-500 rounded-full flex items-center justify-center text-espresso-950 shadow-2xl shadow-copper-500/50 hover:scale-105 active:scale-95 transition-transform border-2 border-espresso-950">
-            <i data-lucide="message-circle" class="w-7 h-7"></i>
-        </button>
-    </div>
-
     <!-- СКРИПТЫ -->
     <script>
     (function () {
         'use strict';
 
         var BOT_USERNAME = 'coffeeshop_michael_bot';
-        var TG_PERSONAL = 'https://t.me/punyaplll';
 
         function byId(id) { return document.getElementById(id); }
 
@@ -433,6 +380,13 @@
         // Мобильное меню
         var menuBtn = byId('menu-btn');
         var mobileMenu = byId('mobile-menu');
+
+        function closeMenu() {
+            if (!mobileMenu || !menuBtn) return;
+            mobileMenu.classList.add('hidden');
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }
+
         if (menuBtn && mobileMenu) {
             menuBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
@@ -441,24 +395,28 @@
                     mobileMenu.classList.remove('hidden');
                     menuBtn.setAttribute('aria-expanded', 'true');
                 } else {
-                    mobileMenu.classList.add('hidden');
-                    menuBtn.setAttribute('aria-expanded', 'false');
+                    closeMenu();
                 }
             });
 
             var mobileLinks = mobileMenu.querySelectorAll('a');
             for (var i = 0; i < mobileLinks.length; i++) {
-                mobileLinks[i].addEventListener('click', function () {
-                    mobileMenu.classList.add('hidden');
-                    menuBtn.setAttribute('aria-expanded', 'false');
-                });
+                mobileLinks[i].addEventListener('click', closeMenu);
             }
+
+            // Закрытие по клику вне меню и по Escape
+            document.addEventListener('click', function (e) {
+                if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) closeMenu();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeMenu();
+            });
         }
 
-        // Подстановка направления при клике на карточки (data-service)
+        // Подстановка направления при клике на кнопки с data-service
         var serviceLinks = document.querySelectorAll('[data-service]');
         for (var j = 0; j < serviceLinks.length; j++) {
-            serviceLinks[j].addEventListener('click', function (e) {
+            serviceLinks[j].addEventListener('click', function () {
                 var serviceName = this.getAttribute('data-service');
                 var selectEl = byId('f-service');
                 if (selectEl) {
@@ -489,43 +447,7 @@
                 window.open(botLink, '_blank');
             });
         }
-
-        // Плавающий чат поддержки
-        var chatWindow = byId('chat-window');
-        var chatToggleBtn = byId('chat-toggle-btn');
-        var chatCloseBtn = byId('chat-close-btn');
-        var chatForm = byId('chat-form');
-
-        function toggleChat() {
-            if (!chatWindow) return;
-            var isClosed = chatWindow.classList.contains('chat-closed');
-            if (isClosed) {
-                chatWindow.classList.remove('chat-closed');
-                chatWindow.classList.add('chat-open');
-            } else {
-                chatWindow.classList.remove('chat-open');
-                chatWindow.classList.add('chat-closed');
-            }
-        }
-
-        if (chatToggleBtn) chatToggleBtn.addEventListener('click', toggleChat);
-        if (chatCloseBtn) chatCloseBtn.addEventListener('click', toggleChat);
-
-        if (chatForm) {
-            chatForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var input = byId('chat-input');
-                var val = input ? input.value.trim() : '';
-                if (!val) return;
-
-                var text = 'Вопрос с сайта: ' + val;
-                var link = TG_PERSONAL + '?text=' + encodeURIComponent(text);
-                window.open(link, '_blank');
-                if (input) input.value = '';
-                toggleChat();
-            });
-        }
     })();
     </script>
 </body>
-</html> 
+</html>
