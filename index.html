@@ -13,7 +13,7 @@
     <meta property="og:title" content="Майкл | Бариста &amp; Кофейный тренер">
     <meta property="og:description" content="Практическое обучение бариста, онлайн-курсы и закрытое кофейное сообщество.">
 
-    <!-- Иконка вкладки (чтобы браузер не искал favicon.ico и не получал 404) -->
+    <!-- Иконка вкладки -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
 
     <!-- Google Fonts -->
@@ -41,19 +41,14 @@
         }
     </script>
 
-    <!-- Lucide Icons: версия закреплена. На @latest (1.x) иконки Instagram больше нет -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 
     <style>
-        /* Иконки внутри ссылок и кнопок не должны перехватывать клик — он уходит самой ссылке/кнопке */
         button svg, a svg { pointer-events: none; }
-
-        /* Все ссылки и кнопки: курсор, отсутствие задержки нажатия на телефоне */
         a, button, select, input { touch-action: manipulation; }
         a, button { cursor: pointer; -webkit-tap-highlight-color: rgba(200, 138, 88, 0.25); }
 
-        /* Эффект нажатия без изменения размера кнопки: если кнопка сжимается при нажатии,
-           курсор у края оказывается снаружи и клик не засчитывается. */
         .pressable { transition: filter .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease; }
         .pressable:active { filter: brightness(.88); }
 
@@ -62,7 +57,6 @@
             outline-offset: 2px;
         }
 
-        /* Блок «Сообщество» не должен прятаться под фиксированной шапкой при переходе по меню */
         #club { scroll-margin-top: 6rem; }
 
         .glass-panel {
@@ -73,6 +67,9 @@
 
         .text-glow { text-shadow: 0 0 30px rgba(200, 138, 88, 0.35); }
         .gold-border { border: 1px solid rgba(200, 138, 88, 0.25); }
+
+        .chat-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        .chat-closed { transform: translateY(20px); opacity: 0; pointer-events: none; }
 
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto !important; }
@@ -105,13 +102,11 @@
                 </a>
             </div>
 
-            <!-- Мобильная кнопка меню -->
             <button id="menu-btn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu" class="pressable md:hidden w-12 h-12 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 flex items-center justify-center">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
         </div>
 
-        <!-- Мобильное меню -->
         <div id="mobile-menu" class="hidden bg-espresso-900 border-b border-white/10 px-6 py-4 space-y-2 text-center">
             <a href="#about" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обо мне</a>
             <a href="#services" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обучение</a>
@@ -153,7 +148,6 @@
     <section id="about" class="py-24 bg-espresso-900 border-t border-white/5 relative">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- Текстовый блок -->
                 <div class="space-y-8">
                     <div>
                         <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-4">Меня зовут Майкл</h2>
@@ -186,7 +180,6 @@
                     </div>
                 </div>
 
-                <!-- Декоративный блок -->
                 <div class="relative h-[450px] sm:h-[550px] rounded-3xl overflow-hidden gold-border bg-espresso-800 flex items-center justify-center p-6 text-center">
                     <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610632380989-680fe0c95b41?q=60&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
                     <div class="relative z-10 max-w-md">
@@ -211,7 +204,6 @@
             <div class="mb-20">
                 <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">1. Онлайн-курсы</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Карточка 1: вся карточка — одна ссылка, кликабельна по всей площади -->
                     <a href="#contact" data-service="Онлайн-курс" class="pressable w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group hover:border-copper-500/60">
                         <div class="h-48 bg-espresso-800 relative overflow-hidden w-full">
                             <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
@@ -225,13 +217,12 @@
                             <div class="pt-4 border-t border-white/10 flex items-center justify-between w-full">
                                 <span class="text-xs uppercase text-crema-200/60 font-medium">Статус: Уточняется</span>
                                 <span class="px-5 py-3 rounded-xl bg-copper-500 text-espresso-950 font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2">
-                                    Узнать <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    Записаться в боте <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                 </span>
                             </div>
                         </div>
                     </a>
 
-                    <!-- Карточка 2 -->
                     <div class="w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col opacity-80">
                         <div class="h-48 bg-espresso-800 flex items-center justify-center relative w-full">
                             <i data-lucide="book-open" class="w-12 h-12 text-white/10"></i>
@@ -273,24 +264,25 @@
                 </div>
             </div>
 
-            <!-- Блок 3: Закрытое сообщество (Telegram) -->
+            <!-- Блок 3: Кофейное сообщество -->
             <div id="club" class="relative rounded-3xl overflow-hidden shadow-2xl w-full">
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-espresso-800 to-copper-600/30 z-0"></div>
                 <div class="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-copper-500/30 rounded-3xl w-full">
                     <div class="space-y-4 md:w-3/5">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-copper-500/20 text-copper-400 text-xs uppercase tracking-widest font-semibold">
-                            <i data-lucide="star" class="w-3.5 h-3.5"></i> Premium Content
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 text-xs uppercase tracking-widest font-semibold">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Вступление бесплатно
                         </div>
-                        <h3 class="font-serif text-2xl sm:text-3xl text-crema-50">3. Платное Telegram-сообщество</h3>
+                        <h3 class="font-serif text-2xl sm:text-3xl text-crema-50">3. Кофейное сообщество</h3>
                         <p class="text-sm text-crema-100 font-light leading-relaxed">
-                            Закрытый канал, где я публикую обучающие материалы, мастер-классы, разборы оборудования и делюсь развлекательным контентом кофейной индустрии.
+                            Канал, где я публикую обучающие материалы, гайды, мастер-классы, разборы оборудования и делюсь развлекательным контентом кофейной индустрии.
+                        </p>
+                        <p class="text-xs text-crema-200/70">
+                            Прямая ссылка: <a href="https://t.me/coffeeshopmichael" target="_blank" rel="noopener" class="text-copper-400 underline hover:text-copper-300">t.me/coffeeshopmichael</a>
                         </p>
                     </div>
                     <div class="md:w-2/5 flex justify-end w-full">
-                        <!-- Пока нет ссылки-приглашения в канал, кнопка открывает личный чат с готовым сообщением.
-                             Когда появится ссылка на канал (https://t.me/+...), замените href и удалите data-tg-text. -->
-                        <a id="club-join" href="https://t.me/punyaplll" data-tg-text="Привет, Майкл! Хочу вступить в закрытый канал. Расскажи, как это сделать?" target="_blank" rel="noopener" class="pressable w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 text-center flex items-center justify-center gap-2 min-h-[54px]">
-                            <i data-lucide="send" class="w-4 h-4"></i> Запросить доступ
+                        <a href="https://t.me/coffeeshop_michael_bot?start=channel" target="_blank" rel="noopener" class="pressable w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 text-center flex items-center justify-center gap-2 min-h-[54px]">
+                            <i data-lucide="send" class="w-4 h-4"></i> Перейти в бота
                         </a>
                     </div>
                 </div>
@@ -302,7 +294,6 @@
     <section id="contact" class="py-24 bg-espresso-900 border-t border-white/5">
         <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-            <!-- Контакты: каждый прямоугольник — целиком кликабельная ссылка -->
             <div class="space-y-8 w-full">
                 <div>
                     <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-3">Связаться со мной</h2>
@@ -313,7 +304,7 @@
                     <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
                         <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="send" class="w-5 h-5"></i></div>
                         <div class="w-full">
-                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Telegram</div>
+                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Telegram (личный)</div>
                             <div class="font-medium text-crema-100 text-base">@punyaplll</div>
                         </div>
                     </a>
@@ -341,6 +332,14 @@
                             <div class="font-medium text-crema-100 text-base">@timomikeee</div>
                         </div>
                     </a>
+
+                    <a href="https://t.me/coffeeshop_michael_bot" target="_blank" rel="noopener" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-copper-500/40 hover:border-copper-500/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="bot" class="w-5 h-5"></i></div>
+                        <div class="w-full">
+                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Telegram-бот</div>
+                            <div class="font-medium text-crema-100 text-base">Запись на обучение и канал</div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -349,24 +348,22 @@
                 <h3 class="font-serif text-2xl text-crema-50 mb-6">Быстрая заявка</h3>
                 <form id="contact-form" class="space-y-4 w-full">
                     <div class="w-full">
-                        <label for="f-name" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Ваше имя</label>
-                        <input id="f-name" type="text" required autocomplete="name" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:border-copper-400" placeholder="Как к вам обращаться?">
-                    </div>
-                    <div class="w-full">
                         <label for="f-service" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Направление</label>
                         <select id="f-service" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:border-copper-400">
                             <option value="Личное обучение">Личное обучение</option>
                             <option value="Онлайн-курс">Онлайн-курс</option>
-                            <option value="Закрытое сообщество">Доступ в закрытый канал</option>
+                            <option value="Закрытое сообщество">Кофейное сообщество (канал)</option>
                             <option value="Другой вопрос">Другой вопрос</option>
                         </select>
                     </div>
                     <div class="pt-2 w-full">
                         <button type="submit" class="pressable w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold uppercase tracking-wider text-sm hover:bg-copper-400 shadow-lg flex justify-center items-center gap-2 min-h-[54px] text-center">
-                            Отправить в Telegram <i data-lucide="send" class="w-4 h-4"></i>
+                            Перейти в Telegram-бота <i data-lucide="send" class="w-4 h-4"></i>
                         </button>
                     </div>
-                    <p id="form-status" role="status" aria-live="polite" class="text-xs text-crema-200 min-h-[1rem]"></p>
+                    <p id="form-status" role="status" aria-live="polite" class="text-xs text-crema-200/70 text-center min-h-[1rem] pt-1">
+                        Вы перейдёте в Telegram-бота, где сможете выбрать программу и оставить заявку.
+                    </p>
                 </form>
             </div>
         </div>
@@ -381,97 +378,154 @@
         </div>
     </footer>
 
+    <!-- ЧАТ ПОДДЕРЖКИ -->
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chat-window" class="chat-closed w-[310px] sm:w-[350px] bg-espresso-900 border border-copper-500/40 rounded-2xl shadow-2xl mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
+            <div class="bg-espresso-950 p-4 border-b border-white/10 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-copper-500 flex items-center justify-center text-espresso-950 font-bold"><i data-lucide="coffee" class="w-4 h-4"></i></div>
+                    <div>
+                        <div class="text-sm font-semibold text-crema-50">Чат с Майклом</div>
+                        <div class="text-xs text-copper-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Онлайн
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="chat-close-btn" class="p-2 text-crema-200 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-4 h-[180px] overflow-y-auto bg-espresso-900/60 flex flex-col gap-3">
+                <div class="bg-espresso-800 text-xs sm:text-sm text-crema-100 p-3 rounded-xl rounded-tl-sm self-start max-w-[90%] border border-white/5">
+                    Привет! 👋 Если есть вопросы по обучению или каналу — напиши сообщение ниже, отвечу лично!
+                </div>
+            </div>
+            <form id="chat-form" class="p-3 bg-espresso-950 border-t border-white/10 flex gap-2 w-full">
+                <input id="chat-input" type="text" placeholder="Задайте вопрос..." required class="w-full bg-espresso-900 border border-white/10 rounded-xl px-3 text-sm text-crema-100 focus:outline-none focus:border-copper-400">
+                <button type="submit" class="bg-copper-500 p-3 rounded-xl text-espresso-950 hover:bg-copper-400 active:scale-95 transition flex items-center justify-center shrink-0 min-w-[48px] min-h-[48px]">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+
+        <button type="button" id="chat-toggle-btn" aria-label="Открыть чат" class="w-16 h-16 bg-copper-500 rounded-full flex items-center justify-center text-espresso-950 shadow-2xl shadow-copper-500/50 hover:scale-105 active:scale-95 transition-transform border-2 border-espresso-950">
+            <i data-lucide="message-circle" class="w-7 h-7"></i>
+        </button>
+    </div>
+
     <!-- СКРИПТЫ -->
     <script>
-        (function () {
-            'use strict';
+    (function () {
+        'use strict';
 
-            var TG = 'https://t.me/punyaplll';
+        var BOT_USERNAME = 'coffeeshop_michael_bot';
+        var TG_PERSONAL = 'https://t.me/punyaplll';
 
-            function byId(id) { return document.getElementById(id); }
-            function tgLink(text) { return TG + '?text=' + encodeURIComponent(text); }
+        function byId(id) { return document.getElementById(id); }
 
-            // Иконки. Если CDN недоступен, сайт всё равно работает — просто без иконок.
-            try {
-                if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                    window.lucide.createIcons();
-                }
-            } catch (err) {
-                console.warn('Иконки не загрузились:', err);
+        // Инициализация Lucide иконок
+        try {
+            if (window.lucide) {
+                lucide.createIcons();
             }
+        } catch (e) {
+            console.error(e);
+        }
 
-            // Мобильное меню
-            var menuBtn = byId('menu-btn');
-            var mobileMenu = byId('mobile-menu');
-
-            function setMenu(open) {
-                mobileMenu.classList.toggle('hidden', !open);
-                menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-                menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-            }
-
-            menuBtn.addEventListener('click', function () {
-                setMenu(mobileMenu.classList.contains('hidden'));
-            });
-            mobileMenu.addEventListener('click', function (e) {
-                if (e.target.closest('a')) { setMenu(false); }
-            });
-            document.addEventListener('click', function (e) {
-                if (!mobileMenu.classList.contains('hidden') && !e.target.closest('nav')) { setMenu(false); }
-            });
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') { setMenu(false); }
-            });
-
-            // Кнопки «Узнать» и «Записаться»: выбрать направление в форме и прокрутить к ней
-            var select = byId('f-service');
-
-            function goToForm(service) {
-                if (select && service) {
-                    var exists = Array.prototype.some.call(select.options, function (o) { return o.value === service; });
-                    if (exists) { select.value = service; }
-                }
-                var target = byId('contact');
-                if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-            }
-
-            document.querySelectorAll('[data-service]').forEach(function (el) {
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    goToForm(el.getAttribute('data-service'));
-                });
-            });
-
-            // Ссылки в Telegram с готовым текстом сообщения
-            document.querySelectorAll('[data-tg-text]').forEach(function (el) {
-                el.setAttribute('href', tgLink(el.getAttribute('data-tg-text')));
-            });
-
-            // Форма: открывает Telegram с готовым сообщением
-            var form = byId('contact-form');
-            var nameInput = byId('f-name');
-            var status = byId('form-status');
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var name = nameInput.value.trim();
-                if (!name) {
-                    status.textContent = 'Введите, пожалуйста, ваше имя.';
-                    nameInput.focus();
-                    return;
-                }
-                var text = 'Привет, Майкл! Меня зовут ' + name + '. Меня интересует: ' + select.value + '. Хочу обсудить детали!';
-                var url = tgLink(text);
-                var win = window.open(url, '_blank');
-                if (win) {
-                    win.opener = null;
+        // Мобильное меню
+        var menuBtn = byId('menu-btn');
+        var mobileMenu = byId('mobile-menu');
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var isHidden = mobileMenu.classList.contains('hidden');
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden');
+                    menuBtn.setAttribute('aria-expanded', 'true');
                 } else {
-                    // Браузер заблокировал новое окно — открываем в этой же вкладке
-                    window.location.href = url;
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.setAttribute('aria-expanded', 'false');
                 }
-                status.textContent = 'Открываю Telegram. Нажмите «Отправить» в мессенджере, чтобы заявка дошла.';
             });
-        })();
+
+            var mobileLinks = mobileMenu.querySelectorAll('a');
+            for (var i = 0; i < mobileLinks.length; i++) {
+                mobileLinks[i].addEventListener('click', function () {
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.setAttribute('aria-expanded', 'false');
+                });
+            }
+        }
+
+        // Подстановка направления при клике на карточки (data-service)
+        var serviceLinks = document.querySelectorAll('[data-service]');
+        for (var j = 0; j < serviceLinks.length; j++) {
+            serviceLinks[j].addEventListener('click', function (e) {
+                var serviceName = this.getAttribute('data-service');
+                var selectEl = byId('f-service');
+                if (selectEl) {
+                    for (var k = 0; k < selectEl.options.length; k++) {
+                        if (selectEl.options[k].value === serviceName) {
+                            selectEl.selectedIndex = k;
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Перенаправление из формы быстрой заявки в Telegram-бота
+        var contactForm = byId('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var serviceSelect = byId('f-service');
+                var serviceVal = serviceSelect ? serviceSelect.value : 'education';
+
+                var startParam = 'education';
+                if (serviceVal === 'Кофейное сообщество (канал)' || serviceVal === 'Закрытое сообщество') {
+                    startParam = 'channel';
+                }
+
+                var botLink = 'https://t.me/' + BOT_USERNAME + '?start=' + startParam;
+                window.open(botLink, '_blank');
+            });
+        }
+
+        // Плавающий чат поддержки
+        var chatWindow = byId('chat-window');
+        var chatToggleBtn = byId('chat-toggle-btn');
+        var chatCloseBtn = byId('chat-close-btn');
+        var chatForm = byId('chat-form');
+
+        function toggleChat() {
+            if (!chatWindow) return;
+            var isClosed = chatWindow.classList.contains('chat-closed');
+            if (isClosed) {
+                chatWindow.classList.remove('chat-closed');
+                chatWindow.classList.add('chat-open');
+            } else {
+                chatWindow.classList.remove('chat-open');
+                chatWindow.classList.add('chat-closed');
+            }
+        }
+
+        if (chatToggleBtn) chatToggleBtn.addEventListener('click', toggleChat);
+        if (chatCloseBtn) chatCloseBtn.addEventListener('click', toggleChat);
+
+        if (chatForm) {
+            chatForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var input = byId('chat-input');
+                var val = input ? input.value.trim() : '';
+                if (!val) return;
+
+                var text = 'Вопрос с сайта: ' + val;
+                var link = TG_PERSONAL + '?text=' + encodeURIComponent(text);
+                window.open(link, '_blank');
+                if (input) input.value = '';
+                toggleChat();
+            });
+        }
+    })();
     </script>
 </body>
 </html>
