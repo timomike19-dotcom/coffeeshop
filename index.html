@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Майкл | Бариста & Кофейный тренер</title>
+    <title>Майкл | Бариста &amp; Кофейный тренер</title>
     <meta name="description" content="Майкл — профессиональный бариста. Практическое обучение, онлайн-курсы, закрытое кофейное сообщество.">
+    <meta name="theme-color" content="#0A0605">
+
+    <!-- Превью ссылки в Telegram / соцсетях -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:title" content="Майкл | Бариста &amp; Кофейный тренер">
+    <meta property="og:description" content="Практическое обучение бариста, онлайн-курсы и закрытое кофейное сообщество.">
+
+    <!-- Иконка вкладки (чтобы браузер не искал favicon.ico и не получал 404) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,15 +41,29 @@
         }
     </script>
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lucide Icons: версия закреплена. На @latest (1.x) иконки Instagram больше нет -->
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 
     <style>
-        /* ИСПРАВЛЕНО: раньше здесь был глобальный pointer-events:none на p, span, h1-h4,
-           что ломало клики по всей странице. Теперь правило точечное — только иконки. */
-        button svg, a svg {
-            pointer-events: none;
+        /* Иконки внутри ссылок и кнопок не должны перехватывать клик — он уходит самой ссылке/кнопке */
+        button svg, a svg { pointer-events: none; }
+
+        /* Все ссылки и кнопки: курсор, отсутствие задержки нажатия на телефоне */
+        a, button, select, input { touch-action: manipulation; }
+        a, button { cursor: pointer; -webkit-tap-highlight-color: rgba(200, 138, 88, 0.25); }
+
+        /* Эффект нажатия без изменения размера кнопки: если кнопка сжимается при нажатии,
+           курсор у края оказывается снаружи и клик не засчитывается. */
+        .pressable { transition: filter .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease; }
+        .pressable:active { filter: brightness(.88); }
+
+        a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+            outline: 2px solid #E0A370;
+            outline-offset: 2px;
         }
+
+        /* Блок «Сообщество» не должен прятаться под фиксированной шапкой при переходе по меню */
+        #club { scroll-margin-top: 6rem; }
 
         .glass-panel {
             background: rgba(18, 11, 8, 0.92);
@@ -49,10 +73,11 @@
 
         .text-glow { text-shadow: 0 0 30px rgba(200, 138, 88, 0.35); }
         .gold-border { border: 1px solid rgba(200, 138, 88, 0.25); }
-        
-        /* Стили чата */
-        .chat-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-        .chat-closed { transform: translateY(20px); opacity: 0; pointer-events: none; }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto !important; }
+            *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+        }
     </style>
 </head>
 <body class="bg-espresso-950 text-crema-50 font-sans antialiased selection:bg-copper-500 selection:text-white relative">
@@ -72,40 +97,40 @@
             </div>
 
             <div class="hidden md:flex gap-3 items-center">
-                <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="w-11 h-11 rounded-full bg-espresso-900 border border-white/10 hover:border-copper-400 text-crema-200 hover:text-copper-400 transition flex items-center justify-center">
+                <a href="https://t.me/punyaplll" target="_blank" rel="noopener" aria-label="Telegram" class="pressable w-11 h-11 rounded-full bg-espresso-900 border border-white/10 hover:border-copper-400 text-crema-200 hover:text-copper-400 flex items-center justify-center">
                     <i data-lucide="send" class="w-5 h-5"></i>
                 </a>
-                <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" class="w-11 h-11 rounded-full bg-espresso-900 border border-white/10 hover:border-copper-400 text-crema-200 hover:text-copper-400 transition flex items-center justify-center">
+                <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" aria-label="Instagram" class="pressable w-11 h-11 rounded-full bg-espresso-900 border border-white/10 hover:border-copper-400 text-crema-200 hover:text-copper-400 flex items-center justify-center">
                     <i data-lucide="instagram" class="w-5 h-5"></i>
                 </a>
             </div>
 
-            <!-- Мобильная кнопка меню (Увеличенная область на 100%) -->
-            <button id="menu-btn" type="button" class="md:hidden w-12 h-12 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 flex items-center justify-center active:bg-espresso-800">
+            <!-- Мобильная кнопка меню -->
+            <button id="menu-btn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu" class="pressable md:hidden w-12 h-12 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 flex items-center justify-center">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
         </div>
 
         <!-- Мобильное меню -->
         <div id="mobile-menu" class="hidden bg-espresso-900 border-b border-white/10 px-6 py-4 space-y-2 text-center">
-            <a href="#about" onclick="toggleMobileMenu()" class="block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обо мне</a>
-            <a href="#services" onclick="toggleMobileMenu()" class="block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обучение</a>
-            <a href="#club" onclick="toggleMobileMenu()" class="block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Сообщество</a>
-            <a href="#contact" onclick="toggleMobileMenu()" class="block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Контакты</a>
+            <a href="#about" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обо мне</a>
+            <a href="#services" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обучение</a>
+            <a href="#club" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Сообщество</a>
+            <a href="#contact" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Контакты</a>
         </div>
     </nav>
 
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <div class="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-copper-500/30 via-espresso-900 to-espresso-950"></div>
-        
+    <header class="relative min-h-screen min-h-[100svh] flex items-center justify-center pt-20 overflow-hidden">
+        <div class="pointer-events-none absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-copper-500/30 via-espresso-900 to-espresso-950"></div>
+
         <div class="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-6">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full gold-border bg-espresso-900/80 text-copper-400 text-xs tracking-widest uppercase mb-2">
                 Практикующий бариста
             </div>
 
             <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-normal leading-tight text-glow text-crema-50">
-                Кофе — это мастерство, <br><span class="italic text-copper-400">которое можно освоить</span>
+                Кофе — это мастерство,<br><span class="italic text-copper-400">которое можно освоить</span>
             </h1>
 
             <p class="max-w-2xl mx-auto text-crema-200 text-base sm:text-lg leading-relaxed font-light">
@@ -113,16 +138,17 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-                <a href="#services" class="w-full sm:w-auto px-10 py-4 rounded-full bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 active:scale-95 transition-all text-center flex items-center justify-center min-h-[54px]">
+                <a href="#services" class="pressable w-full sm:w-auto px-10 py-4 rounded-full bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 text-center flex items-center justify-center min-h-[54px]">
                     Чему я обучаю
                 </a>
-                <a href="#about" class="w-full sm:w-auto px-10 py-4 rounded-full gold-border bg-espresso-900/60 hover:bg-white/10 active:scale-95 transition-all text-crema-100 text-sm tracking-wider uppercase text-center flex items-center justify-center min-h-[54px]">
+                <a href="#about" class="pressable w-full sm:w-auto px-10 py-4 rounded-full gold-border bg-espresso-900/60 hover:bg-white/10 text-crema-100 text-sm tracking-wider uppercase text-center flex items-center justify-center min-h-[54px]">
                     Подробнее обо мне
                 </a>
             </div>
         </div>
     </header>
 
+    <main>
     <!-- ОБО МНЕ -->
     <section id="about" class="py-24 bg-espresso-900 border-t border-white/5 relative">
         <div class="max-w-7xl mx-auto px-6">
@@ -159,13 +185,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Декоративный блок -->
                 <div class="relative h-[450px] sm:h-[550px] rounded-3xl overflow-hidden gold-border bg-espresso-800 flex items-center justify-center p-6 text-center">
-                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610632380989-680fe0c95b41?q=60&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
+                    <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610632380989-680fe0c95b41?q=60&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
                     <div class="relative z-10 max-w-md">
                         <i data-lucide="quote" class="w-10 h-10 text-copper-500/60 mx-auto mb-4"></i>
-                        <p class="font-serif text-xl sm:text-2xl text-crema-100 italic leading-snug">"Моя цель — сделать знания о кофе доступными и помочь развивать реальные практические навыки."</p>
+                        <p class="font-serif text-xl sm:text-2xl text-crema-100 italic leading-snug">«Моя цель — сделать знания о кофе доступными и помочь развивать реальные практические навыки.»</p>
                     </div>
                 </div>
             </div>
@@ -185,10 +211,10 @@
             <div class="mb-20">
                 <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">1. Онлайн-курсы</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Карточка 1 (Вся карточка — единая 100% кнопка!) -->
-                    <button type="button" onclick="orderService('Онлайн-курс Базовый')" class="w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group hover:border-copper-500/60 transition-all active:scale-[0.99]">
+                    <!-- Карточка 1: вся карточка — одна ссылка, кликабельна по всей площади -->
+                    <a href="#contact" data-service="Онлайн-курс" class="pressable w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group hover:border-copper-500/60">
                         <div class="h-48 bg-espresso-800 relative overflow-hidden w-full">
-                            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
+                            <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
                             <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Для начинающих</div>
                         </div>
                         <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between w-full">
@@ -198,12 +224,12 @@
                             </div>
                             <div class="pt-4 border-t border-white/10 flex items-center justify-between w-full">
                                 <span class="text-xs uppercase text-crema-200/60 font-medium">Статус: Уточняется</span>
-                                <div class="px-5 py-3 rounded-xl bg-copper-500 text-espresso-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2">
+                                <span class="px-5 py-3 rounded-xl bg-copper-500 text-espresso-950 font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2">
                                     Узнать <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                </div>
+                                </span>
                             </div>
                         </div>
-                    </button>
+                    </a>
 
                     <!-- Карточка 2 -->
                     <div class="w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col opacity-80">
@@ -233,23 +259,23 @@
                             Персональная работа за эспрессо-машиной. Программа адаптируется под ваши запросы: от базовой настройки помола (dial-in) до отработки скорости отдачи напитков и общения с гостем.
                         </p>
                         <ul class="text-sm text-crema-200 space-y-3">
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Разбор теории и сразу применение на практике</li>
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Постановка руки (холдер, темперовка, питчер)</li>
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Обсуждение формата и сроков — индивидуально</li>
+                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400 shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Разбор теории и сразу применение на практике</li>
+                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400 shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Постановка руки (холдер, темперовка, питчер)</li>
+                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400 shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Обсуждение формата и сроков — индивидуально</li>
                         </ul>
                     </div>
                     <div class="lg:w-1/3 w-full p-6 bg-espresso-950 rounded-2xl border border-white/5 text-center space-y-4">
                         <div class="text-crema-100 font-serif text-xl">Формат персональный</div>
-                        <button type="button" onclick="orderService('Личное обучение')" class="w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 active:scale-95 transition-all text-center flex items-center justify-center min-h-[54px]">
+                        <a href="#contact" data-service="Личное обучение" class="pressable w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 text-center flex items-center justify-center min-h-[54px]">
                             Записаться на обучение
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Блок 3: Закрытое сообщество (Telegram) -->
             <div id="club" class="relative rounded-3xl overflow-hidden shadow-2xl w-full">
-                <div class="absolute inset-0 bg-gradient-to-br from-espresso-800 to-copper-900/40 z-0"></div>
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-espresso-800 to-copper-600/30 z-0"></div>
                 <div class="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-copper-500/30 rounded-3xl w-full">
                     <div class="space-y-4 md:w-3/5">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-copper-500/20 text-copper-400 text-xs uppercase tracking-widest font-semibold">
@@ -261,8 +287,10 @@
                         </p>
                     </div>
                     <div class="md:w-2/5 flex justify-end w-full">
-                        <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 active:scale-95 transition-all text-center flex items-center justify-center gap-2 min-h-[54px]">
-                            <i data-lucide="send" class="w-4 h-4"></i> Вступить в канал
+                        <!-- Пока нет ссылки-приглашения в канал, кнопка открывает личный чат с готовым сообщением.
+                             Когда появится ссылка на канал (https://t.me/+...), замените href и удалите data-tg-text. -->
+                        <a id="club-join" href="https://t.me/punyaplll" data-tg-text="Привет, Майкл! Хочу вступить в закрытый канал. Расскажи, как это сделать?" target="_blank" rel="noopener" class="pressable w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 text-center flex items-center justify-center gap-2 min-h-[54px]">
+                            <i data-lucide="send" class="w-4 h-4"></i> Запросить доступ
                         </a>
                     </div>
                 </div>
@@ -273,60 +301,60 @@
     <!-- КОНТАКТЫ И ФОРМА ЗАЯВКИ -->
     <section id="contact" class="py-24 bg-espresso-900 border-t border-white/5">
         <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
-            
-            <!-- Контакты (Каждый прямоугольник — это 100% кликабельная ссылка!) -->
+
+            <!-- Контакты: каждый прямоугольник — целиком кликабельная ссылка -->
             <div class="space-y-8 w-full">
                 <div>
                     <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-3">Связаться со мной</h2>
                     <p class="text-crema-200 text-sm font-light">Нажмите на любой удобный способ связи или оставьте быстрый запрос.</p>
                 </div>
-                
+
                 <div class="space-y-4 w-full">
-                    <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 transition group active:scale-[0.99]">
+                    <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
                         <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="send" class="w-5 h-5"></i></div>
                         <div class="w-full">
-                            <div class="text-xs text-crema-200/50 uppercase tracking-widest">Telegram</div>
+                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Telegram</div>
                             <div class="font-medium text-crema-100 text-base">@punyaplll</div>
                         </div>
                     </a>
 
-                    <a href="tel:+789930314381" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 transition group active:scale-[0.99]">
+                    <a href="tel:+79930314381" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
                         <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="phone" class="w-5 h-5"></i></div>
                         <div class="w-full">
-                            <div class="text-xs text-crema-200/50 uppercase tracking-widest">Телефон</div>
-                            <div class="font-medium text-crema-100 text-base">8 (993) 031-43-81</div>
+                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Телефон</div>
+                            <div class="font-medium text-crema-100 text-base">8&nbsp;(993)&nbsp;031&#8209;43&#8209;81</div>
                         </div>
                     </a>
 
-                    <a href="mailto:timomike19@gmail.com" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 transition group active:scale-[0.99]">
+                    <a href="mailto:timomike19@gmail.com" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
                         <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="mail" class="w-5 h-5"></i></div>
                         <div class="w-full">
-                            <div class="text-xs text-crema-200/50 uppercase tracking-widest">Email</div>
+                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Email</div>
                             <div class="font-medium text-crema-100 text-base">timomike19@gmail.com</div>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 transition group active:scale-[0.99]">
+                    <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
                         <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="instagram" class="w-5 h-5"></i></div>
                         <div class="w-full">
-                            <div class="text-xs text-crema-200/50 uppercase tracking-widest">Instagram</div>
+                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Instagram</div>
                             <div class="font-medium text-crema-100 text-base">@timomikeee</div>
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- Форма обращения (Кнопка на 100% ширины блока!) -->
+            <!-- Форма обращения -->
             <div class="bg-espresso-950 p-6 sm:p-8 rounded-3xl gold-border shadow-xl self-start w-full">
                 <h3 class="font-serif text-2xl text-crema-50 mb-6">Быстрая заявка</h3>
-                <form id="contact-form" onsubmit="submitFormViaTG(event)" class="space-y-4 w-full">
+                <form id="contact-form" class="space-y-4 w-full">
                     <div class="w-full">
                         <label for="f-name" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Ваше имя</label>
-                        <input id="f-name" type="text" required class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:outline-none focus:border-copper-400" placeholder="Как к вам обращаться?">
+                        <input id="f-name" type="text" required autocomplete="name" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:border-copper-400" placeholder="Как к вам обращаться?">
                     </div>
                     <div class="w-full">
                         <label for="f-service" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Направление</label>
-                        <select id="f-service" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:outline-none focus:border-copper-400">
+                        <select id="f-service" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:border-copper-400">
                             <option value="Личное обучение">Личное обучение</option>
                             <option value="Онлайн-курс">Онлайн-курс</option>
                             <option value="Закрытое сообщество">Доступ в закрытый канал</option>
@@ -334,14 +362,16 @@
                         </select>
                     </div>
                     <div class="pt-2 w-full">
-                        <button type="submit" class="w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold uppercase tracking-wider text-sm hover:bg-copper-400 active:scale-[0.98] transition-all shadow-lg flex justify-center items-center gap-2 min-h-[54px] text-center">
+                        <button type="submit" class="pressable w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold uppercase tracking-wider text-sm hover:bg-copper-400 shadow-lg flex justify-center items-center gap-2 min-h-[54px] text-center">
                             Отправить в Telegram <i data-lucide="send" class="w-4 h-4"></i>
                         </button>
                     </div>
+                    <p id="form-status" role="status" aria-live="polite" class="text-xs text-crema-200 min-h-[1rem]"></p>
                 </form>
             </div>
         </div>
     </section>
+    </main>
 
     <!-- ПОДВАЛ -->
     <footer class="py-8 bg-espresso-950 border-t border-white/10 text-xs text-crema-200/60 text-center">
@@ -351,105 +381,97 @@
         </div>
     </footer>
 
-    <!-- ЧАТ ПОДДЕРЖКИ (Плавающий виджет) -->
-    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <!-- Окно чата -->
-        <div id="chat-window" class="chat-closed w-[310px] sm:w-[350px] bg-espresso-900 border border-copper-500/40 rounded-2xl shadow-2xl mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
-            <div class="bg-espresso-950 p-4 border-b border-white/10 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-copper-500 flex items-center justify-center text-espresso-950 font-bold"><i data-lucide="coffee" class="w-4 h-4"></i></div>
-                    <div>
-                        <div class="text-sm font-semibold text-crema-50">Чат с Майклом</div>
-                        <div class="text-xs text-copper-400 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Онлайн
-                        </div>
-                    </div>
-                </div>
-                <button type="button" onclick="toggleChat()" class="p-2 text-crema-200 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="p-4 h-[180px] overflow-y-auto bg-espresso-900/60 flex flex-col gap-3">
-                <div class="bg-espresso-800 text-xs sm:text-sm text-crema-100 p-3 rounded-xl rounded-tl-sm self-start max-w-[90%] border border-white/5">
-                    Привет! 👋 Если есть вопросы по обучению или каналу — напиши сообщение ниже, я сразу отвечу!
-                </div>
-            </div>
-            <form onsubmit="sendChatMessage(event)" class="p-3 bg-espresso-950 border-t border-white/10 flex gap-2 w-full">
-                <input id="chat-input" type="text" placeholder="Задайте вопрос..." required class="w-full bg-espresso-900 border border-white/10 rounded-xl px-3 text-sm text-crema-100 focus:outline-none focus:border-copper-400">
-                <button type="submit" class="bg-copper-500 p-3 rounded-xl text-espresso-950 hover:bg-copper-400 active:scale-95 transition flex items-center justify-center shrink-0 min-w-[48px] min-h-[48px]">
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                </button>
-            </form>
-        </div>
-        
-        <!-- Плавающая кнопка чата -->
-        <button type="button" onclick="toggleChat()" aria-label="Открыть чат" class="w-16 h-16 bg-copper-500 rounded-full flex items-center justify-center text-espresso-950 shadow-2xl shadow-copper-500/50 hover:scale-105 active:scale-95 transition-transform border-2 border-espresso-950">
-            <i data-lucide="message-circle" class="w-7 h-7"></i>
-        </button>
-    </div>
-
     <!-- СКРИПТЫ -->
     <script>
-        // Инициализация иконок
-        lucide.createIcons();
+        (function () {
+            'use strict';
 
-        // Мобильное меню
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
+            var TG = 'https://t.me/punyaplll';
 
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('hidden');
-        }
+            function byId(id) { return document.getElementById(id); }
+            function tgLink(text) { return TG + '?text=' + encodeURIComponent(text); }
 
-        menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMobileMenu();
-        });
-
-        // Функция быстрой записи из карточек услуг
-        function orderService(serviceName) {
-            const select = document.getElementById('f-service');
-            if(select) {
-                select.value = serviceName;
+            // Иконки. Если CDN недоступен, сайт всё равно работает — просто без иконок.
+            try {
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
+            } catch (err) {
+                console.warn('Иконки не загрузились:', err);
             }
-            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-        }
 
-        // Отправка основной формы (Формирует ссылку в Telegram)
-        function submitFormViaTG(e) {
-            e.preventDefault();
-            const name = document.getElementById('f-name').value;
-            const service = document.getElementById('f-service').value;
-            
-            const text = `Привет, Майкл! Меня зовут ${name}. Меня интересует: ${service}. Хочу обсудить детали!`;
-            const tgLink = `https://t.me/punyaplll?text=${encodeURIComponent(text)}`;
-            
-            window.open(tgLink, '_blank');
-        }
+            // Мобильное меню
+            var menuBtn = byId('menu-btn');
+            var mobileMenu = byId('mobile-menu');
 
-        // Логика Чата поддержки
-        const chatWindow = document.getElementById('chat-window');
-        function toggleChat() {
-            if(chatWindow.classList.contains('chat-closed')) {
-                chatWindow.classList.remove('chat-closed');
-                chatWindow.classList.add('chat-open');
-            } else {
-                chatWindow.classList.remove('chat-open');
-                chatWindow.classList.add('chat-closed');
+            function setMenu(open) {
+                mobileMenu.classList.toggle('hidden', !open);
+                menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
             }
-        }
 
-        function sendChatMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const val = input.value.trim();
-            if(!val) return;
-            
-            const text = `Вопрос с сайта: ${val}`;
-            const tgLink = `https://t.me/punyaplll?text=${encodeURIComponent(text)}`;
-            
-            window.open(tgLink, '_blank');
-            input.value = '';
-            toggleChat();
-        }
+            menuBtn.addEventListener('click', function () {
+                setMenu(mobileMenu.classList.contains('hidden'));
+            });
+            mobileMenu.addEventListener('click', function (e) {
+                if (e.target.closest('a')) { setMenu(false); }
+            });
+            document.addEventListener('click', function (e) {
+                if (!mobileMenu.classList.contains('hidden') && !e.target.closest('nav')) { setMenu(false); }
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { setMenu(false); }
+            });
+
+            // Кнопки «Узнать» и «Записаться»: выбрать направление в форме и прокрутить к ней
+            var select = byId('f-service');
+
+            function goToForm(service) {
+                if (select && service) {
+                    var exists = Array.prototype.some.call(select.options, function (o) { return o.value === service; });
+                    if (exists) { select.value = service; }
+                }
+                var target = byId('contact');
+                if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            }
+
+            document.querySelectorAll('[data-service]').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    goToForm(el.getAttribute('data-service'));
+                });
+            });
+
+            // Ссылки в Telegram с готовым текстом сообщения
+            document.querySelectorAll('[data-tg-text]').forEach(function (el) {
+                el.setAttribute('href', tgLink(el.getAttribute('data-tg-text')));
+            });
+
+            // Форма: открывает Telegram с готовым сообщением
+            var form = byId('contact-form');
+            var nameInput = byId('f-name');
+            var status = byId('form-status');
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = nameInput.value.trim();
+                if (!name) {
+                    status.textContent = 'Введите, пожалуйста, ваше имя.';
+                    nameInput.focus();
+                    return;
+                }
+                var text = 'Привет, Майкл! Меня зовут ' + name + '. Меня интересует: ' + select.value + '. Хочу обсудить детали!';
+                var url = tgLink(text);
+                var win = window.open(url, '_blank');
+                if (win) {
+                    win.opener = null;
+                } else {
+                    // Браузер заблокировал новое окно — открываем в этой же вкладке
+                    window.location.href = url;
+                }
+                status.textContent = 'Открываю Telegram. Нажмите «Отправить» в мессенджере, чтобы заявка дошла.';
+            });
+        })();
     </script>
 </body>
 </html>
