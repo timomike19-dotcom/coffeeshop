@@ -1,477 +1,181 @@
-<!DOCTYPE html>
-<html lang="ru" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Майкл | Бариста &amp; Кофейный тренер</title>
-    <meta name="description" content="Майкл — профессиональный бариста. Практическое обучение, онлайн-курсы, закрытое кофейное сообщество.">
-    <meta name="theme-color" content="#0A0605">
+import asyncio
+import logging
 
-    <!-- Превью ссылки в Telegram / соцсетях -->
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="ru_RU">
-    <meta property="og:title" content="Майкл | Бариста &amp; Кофейный тренер">
-    <meta property="og:description" content="Практическое обучение бариста, онлайн-курсы и закрытое кофейное сообщество.">
+from aiogram import Bot, Dispatcher, F, Router
+from aiogram.filters import CommandStart, CommandObject
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 
-    <!-- Иконка вкладки (чтобы браузер не искал favicon.ico и не получал 404) -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+# ======================= НАСТРОЙКИ =======================
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+BOT_TOKEN = "ВСТАВЬ_СЮДА_СВОЙ_ТОКЕН_ОТ_BOTFATHER"
+ADMIN_ID = 5981123460
+CHANNEL_ID = -1004467420476
+CHANNEL_INVITE_LINK = "https://t.me/coffeeshopmichael"
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        espresso: { 950: '#0A0605', 900: '#120B08', 800: '#1C120D', 700: '#2A1B14' },
-                        copper: { 400: '#E0A370', 500: '#C88A58', 600: '#B07240' },
-                        crema: { 50: '#FAF7F2', 100: '#F3EDE2', 200: '#E5D8C5' }
-                    },
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'serif'],
-                        sans: ['"Manrope"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+# ===========================================================
 
-    <!-- Lucide Icons: версия закреплена. На @latest (1.x) иконки Instagram больше нет -->
-    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+logging.basicConfig(level=logging.INFO)
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher()
+router = Router()
+dp.include_router(router)
 
-    <style>
-        /* Иконки внутри ссылок и кнопок не должны перехватывать клик — он уходит самой ссылке/кнопке */
-        button svg, a svg { pointer-events: none; }
 
-        /* Все ссылки и кнопки: курсор, отсутствие задержки нажатия на телефоне */
-        a, button, select, input { touch-action: manipulation; }
-        a, button { cursor: pointer; -webkit-tap-highlight-color: rgba(200, 138, 88, 0.25); }
+class LeadForm(StatesGroup):
+    waiting_name = State()
 
-        /* Эффект нажатия без изменения размера кнопки: если кнопка сжимается при нажатии,
-           курсор у края оказывается снаружи и клик не засчитывается. */
-        .pressable { transition: filter .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease; }
-        .pressable:active { filter: brightness(.88); }
 
-        a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
-            outline: 2px solid #E0A370;
-            outline-offset: 2px;
-        }
+def main_menu():
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="☕ Кофейное сообщество (бесплатно)", callback_data="channel")],
+        [InlineKeyboardButton(text="🎓 Чему я обучаю (платно)", callback_data="education")],
+    ])
+    return kb
 
-        /* Блок «Сообщество» не должен прятаться под фиксированной шапкой при переходе по меню */
-        #club { scroll-margin-top: 6rem; }
 
-        .glass-panel {
-            background: rgba(18, 11, 8, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
+# ---------- ТЕКСТЫ (вынесены отдельно, чтобы не дублировать) ----------
 
-        .text-glow { text-shadow: 0 0 30px rgba(200, 138, 88, 0.35); }
-        .gold-border { border: 1px solid rgba(200, 138, 88, 0.25); }
+CHANNEL_TEXT = (
+    "🔥 <b>Кофейное сообщество Майкла</b>\n\n"
+    "✅ <b>Вступление — бесплатно!</b>\n\n"
+    "Присоединяйся к живому каналу о кофе:\n\n"
+    "☕ Разборы и практические материалы\n"
+    "🎥 Мастер-классы\n"
+    "⚙️ Разборы оборудования\n"
+    "😄 Живой контент из мира кофе\n\n"
+    "💡 Внутри канала уже есть полезные <b>гайды и обучающие материалы</b> — "
+    "отличная бесплатная точка старта перед платным обучением.\n\n"
+    f"🔗 Ссылка на канал: {CHANNEL_INVITE_LINK}\n\n"
+    "Жми кнопку ниже, чтобы вступить 👇"
+)
 
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto !important; }
-            *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-        }
-    </style>
-</head>
-<body class="bg-espresso-950 text-crema-50 font-sans antialiased selection:bg-copper-500 selection:text-white relative">
+EDUCATION_TEXT = (
+    "🎓 <b>Чему я обучаю</b>\n\n"
+    "💳 <i>Это платные форматы, условия обсуждаются индивидуально.</i>\n\n"
+    "<b>1. Онлайн-курсы</b> — базовые и продвинутые материалы для самостоятельного изучения "
+    "(программа формируется).\n\n"
+    "<b>2. Личное обучение</b> — индивидуальная практика за эспрессо-машиной: разбор помола, "
+    "экстракции, работы с молоком и сервиса. Формат и стоимость обсуждаются индивидуально.\n\n"
+    "☕ <i>Не готов пока к платному обучению? Загляни в наш "
+    f"<a href='{CHANNEL_INVITE_LINK}'>бесплатный кофейный канал</a> с гайдами — "
+    "там тоже много полезного!</i>\n\n"
+    "Выбери направление ниже, и я запишу твою заявку 👇"
+)
 
-    <!-- НАВИГАЦИЯ -->
-    <nav class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3 py-2 text-crema-100 font-serif text-2xl tracking-widest uppercase font-semibold">
-                Michael.
-            </a>
 
-            <div class="hidden md:flex items-center gap-1 text-sm uppercase tracking-wider text-crema-200">
-                <a href="#about" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-xl">Обо мне</a>
-                <a href="#services" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-xl">Обучение</a>
-                <a href="#club" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-xl">Сообщество</a>
-                <a href="#contact" class="px-4 py-3 hover:text-copper-400 transition-colors font-medium rounded-xl">Контакты</a>
-            </div>
+def channel_keyboard(back_to="back_main"):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="➡️ Вступить в канал бесплатно", url=CHANNEL_INVITE_LINK)],
+        [InlineKeyboardButton(text="⬅️ Главное меню", callback_data=back_to)],
+    ])
 
-            <div class="hidden md:flex gap-3 items-center">
-                <a href="https://t.me/punyaplll" target="_blank" rel="noopener" aria-label="Telegram" class="pressable w-11 h-11 rounded-full bg-espresso-900 border border-white/10 hover:border-copper-400 text-crema-200 hover:text-copper-400 flex items-center justify-center">
-                    <i data-lucide="send" class="w-5 h-5"></i>
-                </a>
-                <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" aria-label="Instagram" class="pressable w-11 h-11 rounded-full bg-espresso-900 border border-white/10 hover:border-copper-400 text-crema-200 hover:text-copper-400 flex items-center justify-center">
-                    <i data-lucide="instagram" class="w-5 h-5"></i>
-                </a>
-            </div>
 
-            <!-- Мобильная кнопка меню -->
-            <button id="menu-btn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu" class="pressable md:hidden w-12 h-12 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 flex items-center justify-center">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
-        </div>
+def education_keyboard(back_to="back_main"):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📚 Онлайн-курсы", callback_data="lead_online")],
+        [InlineKeyboardButton(text="🧑‍🏫 Личное обучение", callback_data="lead_personal")],
+        [InlineKeyboardButton(text="⬅️ Главное меню", callback_data=back_to)],
+    ])
 
-        <!-- Мобильное меню -->
-        <div id="mobile-menu" class="hidden bg-espresso-900 border-b border-white/10 px-6 py-4 space-y-2 text-center">
-            <a href="#about" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обо мне</a>
-            <a href="#services" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Обучение</a>
-            <a href="#club" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Сообщество</a>
-            <a href="#contact" class="pressable block w-full py-3.5 px-4 rounded-xl text-crema-200 hover:text-copper-400 hover:bg-espresso-950 font-medium text-base">Контакты</a>
-        </div>
-    </nav>
 
-    <!-- ГЛАВНЫЙ ЭКРАН -->
-    <header class="relative min-h-screen min-h-[100svh] flex items-center justify-center pt-20 overflow-hidden">
-        <div class="pointer-events-none absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-copper-500/30 via-espresso-900 to-espresso-950"></div>
+# ---------- /start (в т.ч. с диплинками с сайта) ----------
 
-        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-6">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full gold-border bg-espresso-900/80 text-copper-400 text-xs tracking-widest uppercase mb-2">
-                Практикующий бариста
-            </div>
+@router.message(CommandStart())
+async def start_handler(message: Message, command: CommandObject):
+    param = command.args  # то, что передано после ?start=
 
-            <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-normal leading-tight text-glow text-crema-50">
-                Кофе — это мастерство,<br><span class="italic text-copper-400">которое можно освоить</span>
-            </h1>
+    if param == "channel":
+        await message.answer(CHANNEL_TEXT, reply_markup=channel_keyboard(), parse_mode="HTML")
+        return
+    elif param == "education":
+        await message.answer(EDUCATION_TEXT, reply_markup=education_keyboard(), parse_mode="HTML")
+        return
 
-            <p class="max-w-2xl mx-auto text-crema-200 text-base sm:text-lg leading-relaxed font-light">
-                Делюсь практическими знаниями, объясняю рабочие процессы понятным языком и помогаю начинающим бариста увереннее чувствовать себя за кофемашиной.
-            </p>
+    text = (
+        "☕ <b>Привет! Я бот Майкла — практикующего бариста и кофейного тренера.</b>\n\n"
+        "Здесь ты можешь:\n"
+        "— вступить в кофейное сообщество <b>бесплатно</b>\n"
+        "— записаться на <b>платное</b> обучение (онлайн или лично)\n\n"
+        "Выбирай, что тебе интересно 👇"
+    )
+    await message.answer(text, reply_markup=main_menu(), parse_mode="HTML")
 
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-                <a href="#services" class="pressable w-full sm:w-auto px-10 py-4 rounded-full bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 text-center flex items-center justify-center min-h-[54px]">
-                    Чему я обучаю
-                </a>
-                <a href="#about" class="pressable w-full sm:w-auto px-10 py-4 rounded-full gold-border bg-espresso-900/60 hover:bg-white/10 text-crema-100 text-sm tracking-wider uppercase text-center flex items-center justify-center min-h-[54px]">
-                    Подробнее обо мне
-                </a>
-            </div>
-        </div>
-    </header>
 
-    <main>
-    <!-- ОБО МНЕ -->
-    <section id="about" class="py-24 bg-espresso-900 border-t border-white/5 relative">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- Текстовый блок -->
-                <div class="space-y-8">
-                    <div>
-                        <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-4">Меня зовут Майкл</h2>
-                        <p class="text-crema-200 leading-relaxed font-light text-base sm:text-lg">
-                            Я бариста с практическим опытом работы в кофейнях и интересом к тому, как устроена кофейная индустрия изнутри. За время работы я познакомился с разными форматами заведений, научился работать с гостями и освоил процессы, необходимые для качественного обслуживания.
-                        </p>
-                    </div>
+# ---------- БЛОК: КАНАЛ (бесплатно) ----------
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="coffee" class="w-6 h-6 text-copper-400 mb-3"></i>
-                            <h3 class="font-serif text-lg mb-1 text-crema-100">Приготовление</h3>
-                            <p class="text-xs sm:text-sm text-crema-200/70">Качество приготовления и фокус на результате в чашке.</p>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="settings" class="w-6 h-6 text-copper-400 mb-3"></i>
-                            <h3 class="font-serif text-lg mb-1 text-crema-100">Оборудование</h3>
-                            <p class="text-xs sm:text-sm text-crema-200/70">Опыт работы с автоматическими и традиционными эспрессо-машинами.</p>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="users" class="w-6 h-6 text-copper-400 mb-3"></i>
-                            <h3 class="font-serif text-lg mb-1 text-crema-100">Обслуживание</h3>
-                            <p class="text-xs sm:text-sm text-crema-200/70">Создание комфортной атмосферы и помощь гостям с выбором.</p>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-espresso-800/50 gold-border">
-                            <i data-lucide="calculator" class="w-6 h-6 text-copper-400 mb-3"></i>
-                            <h3 class="font-serif text-lg mb-1 text-crema-100">Касса (Акси)</h3>
-                            <p class="text-xs sm:text-sm text-crema-200/70">Скорость, точность расчётов и организация рабочего процесса.</p>
-                        </div>
-                    </div>
-                </div>
+@router.callback_query(F.data == "channel")
+async def channel_info(call: CallbackQuery):
+    await call.message.edit_text(CHANNEL_TEXT, reply_markup=channel_keyboard(), parse_mode="HTML")
+    await call.answer()
 
-                <!-- Декоративный блок -->
-                <div class="relative h-[450px] sm:h-[550px] rounded-3xl overflow-hidden gold-border bg-espresso-800 flex items-center justify-center p-6 text-center">
-                    <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610632380989-680fe0c95b41?q=60&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
-                    <div class="relative z-10 max-w-md">
-                        <i data-lucide="quote" class="w-10 h-10 text-copper-500/60 mx-auto mb-4"></i>
-                        <p class="font-serif text-xl sm:text-2xl text-crema-100 italic leading-snug">«Моя цель — сделать знания о кофе доступными и помочь развивать реальные практические навыки.»</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- УСЛУГИ: ЧЕМУ Я ОБУЧАЮ -->
-    <section id="services" class="py-24 bg-espresso-950 border-t border-white/5 relative">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-copper-400 text-xs uppercase tracking-widest font-semibold mb-2 block">Форматы работы</span>
-                <h2 class="font-serif text-3xl sm:text-4xl text-crema-50">Чему я обучаю</h2>
-                <p class="text-crema-200 text-sm mt-3">Выбирайте подходящий формат в зависимости от ваших целей и текущего уровня.</p>
-            </div>
+# ---------- БЛОК: ОБУЧЕНИЕ (платно) ----------
 
-            <!-- Блок 1: Онлайн-курсы -->
-            <div class="mb-20">
-                <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">1. Онлайн-курсы</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Карточка 1: вся карточка — одна ссылка, кликабельна по всей площади -->
-                    <a href="#contact" data-service="Онлайн-курс" class="pressable w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col group hover:border-copper-500/60">
-                        <div class="h-48 bg-espresso-800 relative overflow-hidden w-full">
-                            <div class="pointer-events-none absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=60&w=800')] bg-cover bg-center opacity-50 transition-transform duration-500 group-hover:scale-105"></div>
-                            <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Для начинающих</div>
-                        </div>
-                        <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between w-full">
-                            <div>
-                                <h4 class="font-serif text-xl text-crema-50 mb-3">Базовый курс бариста (В разработке)</h4>
-                                <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Фундаментальные знания о зерне, экстракции и базовом взбивании молока. Идеально для тех, кто хочет понять основы.</p>
-                            </div>
-                            <div class="pt-4 border-t border-white/10 flex items-center justify-between w-full">
-                                <span class="text-xs uppercase text-crema-200/60 font-medium">Статус: Уточняется</span>
-                                <span class="px-5 py-3 rounded-xl bg-copper-500 text-espresso-950 font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2">
-                                    Узнать <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
+@router.callback_query(F.data == "education")
+async def education_info(call: CallbackQuery):
+    await call.message.edit_text(EDUCATION_TEXT, reply_markup=education_keyboard(), parse_mode="HTML")
+    await call.answer()
 
-                    <!-- Карточка 2 -->
-                    <div class="w-full text-left bg-espresso-900 rounded-3xl gold-border overflow-hidden flex flex-col opacity-80">
-                        <div class="h-48 bg-espresso-800 flex items-center justify-center relative w-full">
-                            <i data-lucide="book-open" class="w-12 h-12 text-white/10"></i>
-                            <div class="absolute bottom-4 left-4 bg-espresso-950/90 px-3 py-1.5 rounded-lg text-xs text-copper-400 uppercase tracking-wide font-semibold">Продвинутый</div>
-                        </div>
-                        <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between w-full">
-                            <div>
-                                <h4 class="font-serif text-xl text-crema-50 mb-3">Латте-арт и химия экстракции</h4>
-                                <p class="text-sm text-crema-200/80 mb-6 font-light leading-relaxed">Программа находится в стадии формирования. Детальный разбор температуры, давления и техники вливания.</p>
-                            </div>
-                            <div class="pt-4 border-t border-white/10">
-                                <span class="text-xs uppercase text-copper-400 font-medium">Анонс скоро</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Блок 2: Личное обучение -->
-            <div class="mb-20">
-                <h3 class="font-serif text-2xl text-crema-100 border-l-4 border-copper-500 pl-4 mb-8">2. Индивидуальное обучение</h3>
-                <div class="bg-espresso-900 rounded-3xl gold-border p-6 sm:p-10 flex flex-col lg:flex-row gap-8 items-center w-full">
-                    <div class="lg:w-2/3 space-y-6">
-                        <p class="text-base text-crema-200 leading-relaxed font-light">
-                            Персональная работа за эспрессо-машиной. Программа адаптируется под ваши запросы: от базовой настройки помола (dial-in) до отработки скорости отдачи напитков и общения с гостем.
-                        </p>
-                        <ul class="text-sm text-crema-200 space-y-3">
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400 shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Разбор теории и сразу применение на практике</li>
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400 shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Постановка руки (холдер, темперовка, питчер)</li>
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-copper-500/20 flex items-center justify-center text-copper-400 shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></div> Обсуждение формата и сроков — индивидуально</li>
-                        </ul>
-                    </div>
-                    <div class="lg:w-1/3 w-full p-6 bg-espresso-950 rounded-2xl border border-white/5 text-center space-y-4">
-                        <div class="text-crema-100 font-serif text-xl">Формат персональный</div>
-                        <a href="#contact" data-service="Личное обучение" class="pressable w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-copper-400 text-center flex items-center justify-center min-h-[54px]">
-                            Записаться на обучение
-                        </a>
-                    </div>
-                </div>
-            </div>
+@router.callback_query(F.data.startswith("lead_"))
+async def start_lead(call: CallbackQuery, state: FSMContext):
+    service_name = "Онлайн-курс" if call.data == "lead_online" else "Личное обучение"
+    await state.update_data(service=service_name)
+    await state.set_state(LeadForm.waiting_name)
+    await call.message.answer(
+        f"Отлично! Направление: <b>{service_name}</b> (платно).\n\n"
+        "Как тебя зовут? Напиши имя, и Майкл свяжется с тобой лично, чтобы обсудить условия 🙌",
+        parse_mode="HTML"
+    )
+    await call.answer()
 
-            <!-- Блок 3: Закрытое сообщество (Telegram) -->
-            <div id="club" class="relative rounded-3xl overflow-hidden shadow-2xl w-full">
-                <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-espresso-800 to-copper-600/30 z-0"></div>
-                <div class="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-copper-500/30 rounded-3xl w-full">
-                    <div class="space-y-4 md:w-3/5">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-copper-500/20 text-copper-400 text-xs uppercase tracking-widest font-semibold">
-                            <i data-lucide="star" class="w-3.5 h-3.5"></i> Premium Content
-                        </div>
-                        <h3 class="font-serif text-2xl sm:text-3xl text-crema-50">3. Платное Telegram-сообщество</h3>
-                        <p class="text-sm text-crema-100 font-light leading-relaxed">
-                            Закрытый канал, где я публикую обучающие материалы, мастер-классы, разборы оборудования и делюсь развлекательным контентом кофейной индустрии.
-                        </p>
-                    </div>
-                    <div class="md:w-2/5 flex justify-end w-full">
-                        <!-- Пока нет ссылки-приглашения в канал, кнопка открывает личный чат с готовым сообщением.
-                             Когда появится ссылка на канал (https://t.me/+...), замените href и удалите data-tg-text. -->
-                        <a id="club-join" href="https://t.me/punyaplll" data-tg-text="Привет, Майкл! Хочу вступить в закрытый канал. Расскажи, как это сделать?" target="_blank" rel="noopener" class="pressable w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-espresso-950 font-bold text-sm tracking-wider uppercase hover:bg-crema-100 text-center flex items-center justify-center gap-2 min-h-[54px]">
-                            <i data-lucide="send" class="w-4 h-4"></i> Запросить доступ
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- КОНТАКТЫ И ФОРМА ЗАЯВКИ -->
-    <section id="contact" class="py-24 bg-espresso-900 border-t border-white/5">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
+@router.message(LeadForm.waiting_name)
+async def get_lead_name(message: Message, state: FSMContext):
+    data = await state.get_data()
+    service = data.get("service")
+    user = message.from_user
 
-            <!-- Контакты: каждый прямоугольник — целиком кликабельная ссылка -->
-            <div class="space-y-8 w-full">
-                <div>
-                    <h2 class="font-serif text-3xl sm:text-4xl text-crema-50 mb-3">Связаться со мной</h2>
-                    <p class="text-crema-200 text-sm font-light">Нажмите на любой удобный способ связи или оставьте быстрый запрос.</p>
-                </div>
+    text_to_admin = (
+        f"📩 <b>Новая платная заявка на обучение!</b>\n\n"
+        f"Направление: <b>{service}</b>\n"
+        f"Имя: {message.text}\n"
+        f"Username: @{user.username if user.username else 'нет'}\n"
+        f"ID: <code>{user.id}</code>"
+    )
+    await bot.send_message(ADMIN_ID, text_to_admin, parse_mode="HTML")
+    await message.answer(
+        "✅ Спасибо! Заявка отправлена Майклу, он скоро напишет тебе лично в Telegram, "
+        "чтобы обсудить программу и стоимость."
+    )
+    await state.clear()
 
-                <div class="space-y-4 w-full">
-                    <a href="https://t.me/punyaplll" target="_blank" rel="noopener" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
-                        <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="send" class="w-5 h-5"></i></div>
-                        <div class="w-full">
-                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Telegram</div>
-                            <div class="font-medium text-crema-100 text-base">@punyaplll</div>
-                        </div>
-                    </a>
 
-                    <a href="tel:+79930314381" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
-                        <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="phone" class="w-5 h-5"></i></div>
-                        <div class="w-full">
-                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Телефон</div>
-                            <div class="font-medium text-crema-100 text-base">8&nbsp;(993)&nbsp;031&#8209;43&#8209;81</div>
-                        </div>
-                    </a>
+# ---------- НАЗАД ----------
 
-                    <a href="mailto:timomike19@gmail.com" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
-                        <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="mail" class="w-5 h-5"></i></div>
-                        <div class="w-full">
-                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Email</div>
-                            <div class="font-medium text-crema-100 text-base">timomike19@gmail.com</div>
-                        </div>
-                    </a>
+@router.callback_query(F.data == "back_main")
+async def back_to_main(call: CallbackQuery):
+    text = (
+        "☕ <b>Привет! Я бот Майкла — практикующего бариста и кофейного тренера.</b>\n\n"
+        "Здесь ты можешь:\n"
+        "— вступить в кофейное сообщество <b>бесплатно</b>\n"
+        "— записаться на <b>платное</b> обучение (онлайн или лично)\n\n"
+        "Выбирай, что тебе интересно 👇"
+    )
+    await call.message.edit_text(text, reply_markup=main_menu(), parse_mode="HTML")
+    await call.answer()
 
-                    <a href="https://instagram.com/timomikeee" target="_blank" rel="noopener" class="pressable w-full flex items-center gap-4 p-4 rounded-2xl bg-espresso-950/80 hover:bg-espresso-950 border border-white/10 hover:border-copper-500/60 group">
-                        <div class="w-12 h-12 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 group-hover:bg-copper-500 group-hover:text-espresso-950 transition shrink-0"><i data-lucide="instagram" class="w-5 h-5"></i></div>
-                        <div class="w-full">
-                            <div class="text-xs text-crema-200/70 uppercase tracking-widest">Instagram</div>
-                            <div class="font-medium text-crema-100 text-base">@timomikeee</div>
-                        </div>
-                    </a>
-                </div>
-            </div>
 
-            <!-- Форма обращения -->
-            <div class="bg-espresso-950 p-6 sm:p-8 rounded-3xl gold-border shadow-xl self-start w-full">
-                <h3 class="font-serif text-2xl text-crema-50 mb-6">Быстрая заявка</h3>
-                <form id="contact-form" class="space-y-4 w-full">
-                    <div class="w-full">
-                        <label for="f-name" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Ваше имя</label>
-                        <input id="f-name" type="text" required autocomplete="name" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:border-copper-400" placeholder="Как к вам обращаться?">
-                    </div>
-                    <div class="w-full">
-                        <label for="f-service" class="block text-xs uppercase tracking-wider text-crema-200 mb-2">Направление</label>
-                        <select id="f-service" class="w-full px-4 py-3.5 rounded-xl bg-espresso-900 border border-white/10 text-crema-100 text-sm focus:border-copper-400">
-                            <option value="Личное обучение">Личное обучение</option>
-                            <option value="Онлайн-курс">Онлайн-курс</option>
-                            <option value="Закрытое сообщество">Доступ в закрытый канал</option>
-                            <option value="Другой вопрос">Другой вопрос</option>
-                        </select>
-                    </div>
-                    <div class="pt-2 w-full">
-                        <button type="submit" class="pressable w-full py-4 px-6 rounded-xl bg-copper-500 text-espresso-950 font-bold uppercase tracking-wider text-sm hover:bg-copper-400 shadow-lg flex justify-center items-center gap-2 min-h-[54px] text-center">
-                            Отправить в Telegram <i data-lucide="send" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    <p id="form-status" role="status" aria-live="polite" class="text-xs text-crema-200 min-h-[1rem]"></p>
-                </form>
-            </div>
-        </div>
-    </section>
-    </main>
+async def main():
+    await dp.start_polling(bot)
 
-    <!-- ПОДВАЛ -->
-    <footer class="py-8 bg-espresso-950 border-t border-white/10 text-xs text-crema-200/60 text-center">
-        <div class="max-w-7xl mx-auto px-6 space-y-2">
-            <div class="font-serif tracking-widest uppercase text-crema-100">Michael. Personal Brand</div>
-            <div>© 2024-2026. Практическое обучение бариста. Все права защищены.</div>
-        </div>
-    </footer>
 
-    <!-- СКРИПТЫ -->
-    <script>
-        (function () {
-            'use strict';
-
-            var TG = 'https://t.me/punyaplll';
-
-            function byId(id) { return document.getElementById(id); }
-            function tgLink(text) { return TG + '?text=' + encodeURIComponent(text); }
-
-            // Иконки. Если CDN недоступен, сайт всё равно работает — просто без иконок.
-            try {
-                if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                    window.lucide.createIcons();
-                }
-            } catch (err) {
-                console.warn('Иконки не загрузились:', err);
-            }
-
-            // Мобильное меню
-            var menuBtn = byId('menu-btn');
-            var mobileMenu = byId('mobile-menu');
-
-            function setMenu(open) {
-                mobileMenu.classList.toggle('hidden', !open);
-                menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-                menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-            }
-
-            menuBtn.addEventListener('click', function () {
-                setMenu(mobileMenu.classList.contains('hidden'));
-            });
-            mobileMenu.addEventListener('click', function (e) {
-                if (e.target.closest('a')) { setMenu(false); }
-            });
-            document.addEventListener('click', function (e) {
-                if (!mobileMenu.classList.contains('hidden') && !e.target.closest('nav')) { setMenu(false); }
-            });
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') { setMenu(false); }
-            });
-
-            // Кнопки «Узнать» и «Записаться»: выбрать направление в форме и прокрутить к ней
-            var select = byId('f-service');
-
-            function goToForm(service) {
-                if (select && service) {
-                    var exists = Array.prototype.some.call(select.options, function (o) { return o.value === service; });
-                    if (exists) { select.value = service; }
-                }
-                var target = byId('contact');
-                if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-            }
-
-            document.querySelectorAll('[data-service]').forEach(function (el) {
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    goToForm(el.getAttribute('data-service'));
-                });
-            });
-
-            // Ссылки в Telegram с готовым текстом сообщения
-            document.querySelectorAll('[data-tg-text]').forEach(function (el) {
-                el.setAttribute('href', tgLink(el.getAttribute('data-tg-text')));
-            });
-
-            // Форма: открывает Telegram с готовым сообщением
-            var form = byId('contact-form');
-            var nameInput = byId('f-name');
-            var status = byId('form-status');
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var name = nameInput.value.trim();
-                if (!name) {
-                    status.textContent = 'Введите, пожалуйста, ваше имя.';
-                    nameInput.focus();
-                    return;
-                }
-                var text = 'Привет, Майкл! Меня зовут ' + name + '. Меня интересует: ' + select.value + '. Хочу обсудить детали!';
-                var url = tgLink(text);
-                var win = window.open(url, '_blank');
-                if (win) {
-                    win.opener = null;
-                } else {
-                    // Браузер заблокировал новое окно — открываем в этой же вкладке
-                    window.location.href = url;
-                }
-                status.textContent = 'Открываю Telegram. Нажмите «Отправить» в мессенджере, чтобы заявка дошла.';
-            });
-        })();
-    </script>
-</body>
-</html>
+if __name__ == "__main__":
+    asyncio.run(main())
